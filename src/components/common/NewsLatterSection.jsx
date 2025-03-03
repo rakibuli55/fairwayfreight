@@ -1,5 +1,5 @@
 
-import newsLatterBanner from "../../assets/images/how-it-works.png"
+import newsLatterBanner from "../../assets/images/newslatter.jpg"
 import newsLatterShapeRight from "../../assets/images/shape-newslatter-right.png"
 import PrimaryButton from "./PrimaryButton";
 

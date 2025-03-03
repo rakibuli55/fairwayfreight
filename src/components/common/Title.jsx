@@ -8,7 +8,7 @@ const Title = ({ title, subTitle, btnText }) => {
             <h2 className="text-[64px] font-bold text-heading font-tungsten">{title}</h2>
         </div>
         <div>
-            <PrimaryButton text={btnText} className="py-4 px-8 rounded-[40px] bg-primaryGreen text-white hover:text-primaryGreen hover:bg-white hover:scale-[1.05] capitalize font-semibold" />
+            <PrimaryButton text={btnText} className="py-4 px-8 rounded-[40px] bg-primaryGreen border border-primaryGreen text-white hover:text-primaryGreen hover:bg-white hover:scale-[1.05] capitalize font-semibold" />
         </div>
     </div>
   )

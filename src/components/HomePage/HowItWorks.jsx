@@ -37,7 +37,7 @@ const cardsData = [
 
 const HowItWorks = () => {
   return (
-    <section className='py-[120px] bg-sectionLight'>
+    <section>
       <Container>
         <div>
             {/* title  */}
