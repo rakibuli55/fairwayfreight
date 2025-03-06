@@ -284,4 +284,51 @@
   .help-input-feild .input-inner .stores input:checked + label:after {
     @apply block;
   }
+  .faq-accordion h3{
+    @apply last:border-b-0
+  }
+  .faq-accordion button:hover{
+    @apply no-underline
+  }
+  .faq-accordion button{
+    @apply relative;
+  }
+  .faq-accordion button svg{
+    @apply h-[24px] w-[24px]
+  }
+  .claim-card{
+    @apply first:border-t
+  }
+  .auth-title{
+    @apply text-[32px] font-bold text-heading mb-[64px];
+  }
+  .auth-input-box label{
+    @apply text-[18px] font-bold text-heading mb-2 block;
+  }
+  .auth-input-box input{
+    @apply p-5 text-[18px] text-heading border rounded-[12px] w-full focus:outline-none;
+  }
+  .shipment-form-layout{
+    @apply py-[90px] px-[124px] border border-primaryGreen rounded-[24px];
+  }
+  .shipment-input-box .shipment-label{
+    @apply block text-[18px] font-bold capitalize text-heading mb-2;
+  }
+  .shipment-input-box .shipment-label span{
+    @apply text-red-500;
+  }
+  .shipment-input-box .shipment-input{
+    @apply py-6 px-5 border border-[#B3BAC5] rounded-[12px] text-[18px] text-heading w-full focus:outline-none;
+  }
+  .error-message{
+    @apply text-sm text-red-500 mt-2;
+  }
+  .shipment-info-indicator:before{
+    content: '';
+    @apply absolute top-1/2 translate-y-[-50%] left-0 
+  }
+  
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

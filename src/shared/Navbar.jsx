@@ -65,7 +65,7 @@ const Navbar = () => {
             {/* auth buttons  */}
             <div className="flex items-center gap-5">
               <Link
-                to={"/login"}
+                to={"/auth/login"}
                 className={`flex items-center gap-2 text-base font-semibold duration-200 ease-in-out hover:opacity-70 ${location.pathname === '/' ? 'text-white' : 'text-heading'}`}
               >
                 <span className="text-[18px]">

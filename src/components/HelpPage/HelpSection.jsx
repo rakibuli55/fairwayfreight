@@ -20,6 +20,11 @@ const HelpSection = () => {
     control,
     formState: { errors },
   } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  }
+
   return (
     <section className="pt-[210px] pb-[120px]">
       <Container>
@@ -28,12 +33,12 @@ const HelpSection = () => {
           <div className="mb-[60px]">
             <TitleV2 subTitle="HELP" title="Help" description="" />
           </div>
-          <div>
+          <div className="flex items-start">
             <div className="w-[50%] pr-[30px]">
               <h4 className="text-[32px] font-bold text-primaryGreen pb-3 border-b border-[#B3BAC5]">
                 Search for a drop-off location near you
               </h4>
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 {/* help-input-feild  */}
                 <div className="help-input-feild">
                   {/* input-inner  */}
@@ -72,7 +77,7 @@ const HelpSection = () => {
                       name="trackingId"
                       id="trackingId"
                       {...register("trackingId", {
-                        required: "Please enter zip code",
+                        required: "Please enter tracking id",
                       })}
                     />
                   </div>
@@ -86,7 +91,7 @@ const HelpSection = () => {
                 <div className="help-input-feild">
                   {/* input-inner  */}
                   <div className="input-inner">
-                    <label htmlFor="trackingId">
+                    <label htmlFor="country">
                       <span>*</span> Country
                     </label>
                     <Controller
@@ -94,7 +99,7 @@ const HelpSection = () => {
                       control={control}
                       rules={{ required: "Please select a country" }}
                       render={({ field }) => (
-                        <Select {...field}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <SelectTrigger className="w-[203px] h-[70px] rounded-[12px] text-[18px] px-5 text-paragraph focus:ring-0">
                             <SelectValue placeholder="Select a country" />
                           </SelectTrigger>
@@ -107,9 +112,9 @@ const HelpSection = () => {
                       )}
                     />
                   </div>
-                  {errors.trackingId && (
+                  {errors.country && (
                     <p className="text-sm mt-1 text-red-500">
-                      {errors.trackingId.message}
+                      {errors.country.message}
                     </p>
                   )}
                 </div>
@@ -126,7 +131,8 @@ const HelpSection = () => {
                         <input
                           type="radio"
                           className="help-input"
-                          name="storeType"
+                          name="store-input"
+                          value="ups"
                           id="storeType"
                           {...register("storeType", {
                             required: "Please select a store type",
@@ -141,7 +147,8 @@ const HelpSection = () => {
                         <input
                           type="radio"
                           className="help-input"
-                          name="storeType"
+                          name="store-input"
+                          value="fedex"
                           id="fedEx"
                           {...register("storeType", {
                             required: "Please select a store type",
@@ -156,7 +163,8 @@ const HelpSection = () => {
                         <input
                           type="radio"
                           className="help-input"
-                          name="storeType"
+                          name="store-input"
+                          value="dhl"
                           id="dhl"
                           {...register("storeType", {
                             required: "Please select a store type",
@@ -178,9 +186,21 @@ const HelpSection = () => {
                     />
                   </button>
                 </div>
+                <p className="text-[18px] text-primaryGreen pt-10 font-semibold">
+                    Please match the carrier on your shipping label with the
+                    corresponding carrier drop off location.
+                  </p>
               </form>
             </div>
-            <div className="w-[50%] pl-[30px]"></div>
+            <div className="w-[50%] pl-[30px]">
+              <div className="map-area">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d8933203.645616453!2d-101.62925491903955!3d39.37117420208103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1741055447813!5m2!1sen!2sbd"
+                  loading="lazy"
+                  className="w-full h-[1060px] border-[5px] border-heading rounded-[16px]"
+                ></iframe>
+              </div>
+            </div>
           </div>
         </div>
       </Container>
