@@ -13,6 +13,8 @@ import ResetPasswordPage from "../pages/AuthPages/ResetPasswordPage";
 import SignupPage from "../pages/AuthPages/SignupPage";
 import VerifyOtpPage from "../pages/AuthPages/VerfifyOtpPage";
 import ShipPage from "../pages/ShipPage";
+import DashboardLayout from "../layout/DashboardLayout";
+import MyAccountPage from "../pages/DashboardPages/MyAccountPage";
 
 const router = createBrowserRouter([
     {
@@ -74,6 +76,16 @@ const router = createBrowserRouter([
                 element:<VerifyOtpPage />
             },
             
+        ]
+    },
+    {
+        path:'/dashboard',
+        element:<DashboardLayout />,
+        children:[
+            {
+                path:'my-account',
+                element:<MyAccountPage />
+            }
         ]
     }
 ]);
