@@ -15,6 +15,7 @@ import VerifyOtpPage from "../pages/AuthPages/VerfifyOtpPage";
 import ShipPage from "../pages/ShipPage";
 import DashboardLayout from "../layout/DashboardLayout";
 import MyAccountPage from "../pages/DashboardPages/MyAccountPage";
+import ShipmentHistoryPage from "../pages/DashboardPages/ShipmentHistoryPage";
 
 const router = createBrowserRouter([
     {
@@ -85,7 +86,11 @@ const router = createBrowserRouter([
             {
                 path:'my-account',
                 element:<MyAccountPage />
-            }
+            },
+            {
+                path:'shipment-history',
+                element:<ShipmentHistoryPage />
+            },
         ]
     }
 ]);

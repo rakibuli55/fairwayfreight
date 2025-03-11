@@ -7,7 +7,7 @@ const DashboardLayout = () => {
     <>
       <Navbar />
       <main>
-        <div className="bg-sectionLight min-h-screen relative z-[1]">
+        <div className="bg-sectionLight min-h-screen relative z-[1] pl-[370px] pt-[152px] pb-[30px] pr-[35px]">
           <Sidebar />
           <Outlet />
         </div>

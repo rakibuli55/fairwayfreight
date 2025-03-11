@@ -344,6 +344,24 @@
   .active-menu-link{
     @apply bg-primaryGreen !text-white;
   }
+  .user-profile-pair {
+    @apply py-3
+  }
+  .user-profile-pair{
+    @apply flex items-center gap-2 text-[18px] text-heading;
+  }
+  .user-profile-pair .key {
+    @apply w-[150px];
+  }
+  .order-table th{
+    @apply p-6 pt-0 text-left text-[18px] font-bold;
+  }
+  .order-table tr{
+    @apply border-b border-[#B3BAC5]
+  }
+  .order-table td{
+    @apply p-6 text-base text-paragraph font-semibold;
+  }
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
