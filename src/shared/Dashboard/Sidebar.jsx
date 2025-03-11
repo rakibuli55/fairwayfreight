@@ -19,7 +19,7 @@ console.log(pathname);
 
   return (
     <div className="p-[46px] pt-[67px] bg-white fixed top-0 left-0 h-screen w-[345px] z-[20]">
-      <Link to={"/"} className="inline-block mb-[45px]">
+      <Link to={"/"} className="inline-block mb-5">
         <img src={Logo} alt="Logo" />
       </Link>
       <ul>
