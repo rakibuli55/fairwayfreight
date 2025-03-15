@@ -1,7 +1,8 @@
-import PrimaryButton from "@/components/common/PrimaryButton";
+import PrimaryButton from "../../components/common/PrimaryButton";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/footer-logo.svg";
+import useLogin from "../../hooks/useLogin";
 
 const LoginPage = () => {
   const {
@@ -9,9 +10,10 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const {userLogin, isLoading} = useLogin()
 
   const onSubmit = (data) => {
-    console.log(data);
+    userLogin(data)
   };
 
   return (
@@ -90,9 +92,9 @@ const LoginPage = () => {
             </div>
             {/* submit btn  */}
             <div>
-              <button className="w-full">
+              <button className={`w-full ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
                 <PrimaryButton
-                  text="Log in"
+                  text={isLoading ? 'Logging in' : 'Log in'}
                   className="p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center"
                 />
               </button>

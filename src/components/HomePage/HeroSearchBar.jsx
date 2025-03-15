@@ -68,11 +68,11 @@ const HeroSearchBar = () => {
                 <SelectValue placeholder="Choose Size" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem className="text-[18px]" value="light">Standard golf bag(up to 42Ibs)</SelectItem>
-                <SelectItem className="text-[18px]" value="dark">Xl golf bag(up to 56Ibs)</SelectItem>
-                <SelectItem className="text-[18px]" value="system">Carry on luggage(up to 25Ibs)</SelectItem>
-                <SelectItem className="text-[18px]" value="system">Checked luggage(up to 5Ibs)</SelectItem>
-                <SelectItem className="text-[18px]" value="system">Oversize luggage(up to 65Ibs)</SelectItem>
+                <SelectItem className="text-[18px]" value="Standard golf bag">Standard golf bag(up to 42Ibs)</SelectItem>
+                <SelectItem className="text-[18px]" value="Xl golf bag">Xl golf bag(up to 56Ibs)</SelectItem>
+                <SelectItem className="text-[18px]" value="Carry on luggage">Carry on luggage(up to 25Ibs)</SelectItem>
+                <SelectItem className="text-[18px]" value="Checked luggage">Checked luggage(up to 5Ibs)</SelectItem>
+                <SelectItem className="text-[18px]" value="Oversize luggage">Oversize luggage(up to 65Ibs)</SelectItem>
               </SelectContent>
             </Select>
           )}

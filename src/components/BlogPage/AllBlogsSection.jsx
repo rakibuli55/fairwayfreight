@@ -16,19 +16,19 @@ const blogData = [
         url:'/blog-details'
     },
     {
-        id:1,
+        id:2,
         image:imageTwo,
         title:'The Best Golf Destinations for Winter Getaways',
         url:'/blog-details'
     },
     {
-        id:1,
+        id:3,
         image:imageThree,
         title:'The Best Golf Destinations for Winter Getaways',
         url:''
     },
     {
-        id:1,
+        id:4,
         image:imageFour,
         title:'The Best Golf Destinations for Winter Getaways',
         url:'/blog-details'

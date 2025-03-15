@@ -49,7 +49,7 @@ const BlogDetailsSection = () => {
             <h4 className="text-[24px] font-bold text-heading">Recent News</h4>
             <div className="recent-news-cards">
               {recentNews?.map((item) => (
-                <RecentNewsCard item={item} />
+                <RecentNewsCard key={item?.id} item={item} />
               ))}
             </div>
           </div>

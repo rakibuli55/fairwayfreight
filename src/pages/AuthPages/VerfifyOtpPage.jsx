@@ -4,19 +4,26 @@ import { Controller, useForm } from "react-hook-form";
 import OTPInput from "react-otp-input";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/footer-logo.svg";
+import useVerifyOtp from "../../hooks/useVerifyOtp";
 
 const VerifyOtpPage = () => {
+  const userEmail = localStorage.getItem('userEmail');
+  const {verifyOtp, isLoading} = useVerifyOtp();
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues:{
+      email:userEmail,
+    }
+  });
   const [otp, setOtp] = useState("");
 
   const onSubmit = (data) => {
     console.log(data);
+    verifyOtp(data)
   };
 
   return (
@@ -31,6 +38,7 @@ const VerifyOtpPage = () => {
             Enter the code just sent your email to reset your password.
           </p>
           <form onSubmit={handleSubmit(onSubmit)}>
+            <input type="email" defaultValue={userEmail} {...register('email')} className="hidden" />
             <Controller
               name="otp"
               control={control}
@@ -69,9 +77,9 @@ const VerifyOtpPage = () => {
 
             {/* submit btn  */}
             <div className="mt-10">
-              <button className="w-full">
+              <button className={`w-full ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
                 <PrimaryButton
-                  text="Submit OTP"
+                  text={isLoading ? 'Submitting OTP...' : 'Submit OTP'}
                   className="p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center"
                 />
               </button>

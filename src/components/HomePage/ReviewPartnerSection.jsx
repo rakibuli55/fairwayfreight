@@ -3,7 +3,7 @@ import Container from '../../container/Container';
 import ClientReview from './ClientReview';
 import Partner from './Partner';
 
-const ReviewPartnerSection = () => {
+const ReviewPartnerSection = ({data}) => {
   return (
     <section className='pt-[193px] pb-[120px]'>
       <Container>

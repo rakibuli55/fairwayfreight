@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/footer-logo.svg";
-import PrimaryButton from "@/components/common/PrimaryButton";
+import PrimaryButton from "../../components/common/PrimaryButton";
+import useEmailVerify from "../../hooks/useEmailVerify";
 
 const ForgotPasswordPage = () => {
   const {
@@ -9,9 +10,10 @@ const ForgotPasswordPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const {verifyEmail, isLoading} = useEmailVerify()
 
   const onSubmit = (data) => {
-    console.log(data);
+    verifyEmail(data);
   };
 
   return (
@@ -50,8 +52,8 @@ const ForgotPasswordPage = () => {
             
             {/* submit btn  */}
             <div className="mt-10">
-              <button className="w-full">
-                <PrimaryButton text="Submit" className="p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center" />
+              <button className={`w-full ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
+                <PrimaryButton text={isLoading ? 'Submitting' : 'Submit'} className="p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center" />
               </button>
             </div>
           </form>

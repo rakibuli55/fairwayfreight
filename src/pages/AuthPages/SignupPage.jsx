@@ -1,10 +1,11 @@
-import PrimaryButton from "@/components/common/PrimaryButton";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { IoCameraOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/footer-logo.svg";
-import { IoCameraOutline } from "react-icons/io5";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import PrimaryButton from "../../components/common/PrimaryButton";
+import useUserRegister from "../../hooks/useUserRegister";
 
 const SignupPage = () => {
   const {
@@ -15,23 +16,35 @@ const SignupPage = () => {
     formState: { errors },
   } = useForm();
   const [uploadedAvatar, setUploadedAvatar] = useState(null);
+  const { userRegister, isLoading } = useUserRegister();
 
   const handleUplod = (e) => {
     const file = e.target.files[0];
-    if(!file.type.startsWith("image/")){
-        toast.error('Only image files are allowed!');
-        return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files are allowed!");
+      return;
     }
-    if(file.size > 2 * 1024 * 1024){
-        toast.error('File size must be less than 2MB!');
-        return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File size must be less than 2MB!");
+      return;
     }
     setUploadedAvatar(URL.createObjectURL(file));
-    setValue("profileAvatar", file)
-  }
+    setValue("avatar", file);
+  };
 
   const onSubmit = (data) => {
-    console.log(data);
+    const formData = new FormData();
+    if (data.avatar) {
+      formData.append("avatar", data.avatar);
+    }
+    formData.append("first_name", data.first_name);
+    formData.append("last_name", data.last_name);
+    formData.append("phone", data.phone);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("password_confirmation", data.password_confirmation);
+    userRegister(formData)
+    console.log();
   };
 
   return (
@@ -45,60 +58,82 @@ const SignupPage = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* photo uploader  */}
             <div className="mb-[64px]">
-              <input type="file" id="photoUploder" className="hidden" onChange={handleUplod} />
+              <input
+                type="file"
+                id="photoUploder"
+                className="hidden"
+                onChange={handleUplod}
+              />
               <div className="flex items-center gap-5">
-                <label htmlFor="photoUploder" className={`w-[93px] h-[93px] flex items-center justify-center border-[2px]  border-heading rounded-[12px] text-[40px] cursor-pointer overflow-hidden ${uploadedAvatar ? 'border-solid border-white' : 'border-dashed'}`}>
-                
-                {
-                    uploadedAvatar ? <img className="w-full h-full object-cover" src={uploadedAvatar} alt="uploadedAvatar" /> : <IoCameraOutline />
-                }
+                <label
+                  htmlFor="photoUploder"
+                  className={`w-[93px] h-[93px] flex items-center justify-center border-[2px]  border-heading rounded-[12px] text-[40px] cursor-pointer overflow-hidden ${
+                    uploadedAvatar
+                      ? "border-solid border-white"
+                      : "border-dashed"
+                  }`}
+                >
+                  {uploadedAvatar ? (
+                    <img
+                      className="w-full h-full object-cover"
+                      src={uploadedAvatar}
+                      alt="uploadedAvatar"
+                    />
+                  ) : (
+                    <IoCameraOutline />
+                  )}
                 </label>
-                <p className="text-[24px] font-bold text-heading">Add your photo <span className="font-normal text-[18px]">(Less than 2MB)</span></p>
+                <p className="text-[24px] font-bold text-heading">
+                  Add your photo{" "}
+                  <span className="font-normal text-[18px]">
+                    (Less than 2MB)
+                  </span>
+                </p>
               </div>
             </div>
             {/* auth-input-box  */}
             <div className="auth-input-box">
               <div>
-                <label htmlFor="firstName">First Name</label>
+                <label htmlFor="first_name">First Name</label>
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="first_name"
+                  name="first_name"
                   className={`${
-                    errors.firstName ? "border-red-500" : "border-[#B3BAC5]"
+                    errors.first_name ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
                   placeholder="Enter Your First Name"
-                  {...register("firstName", {
+                  {...register("first_name", {
                     required: "Please enter your first name",
                   })}
                 />
               </div>
-              {errors.firstName && (
+              {errors.first_name && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.firstName.message}
+                  {errors.first_name.message}
                 </p>
               )}
             </div>
             {/* auth-input-box  */}
             <div className="auth-input-box mt-7">
               <div>
-                <label htmlFor="firstName">Last Name</label>
+                <label htmlFor="first_name">Last Name</label>
                 <input
                   type="text"
-                  id="lastName"
-                  name="lastName"
+                  id="last_name"
+                  name="last_name"
                   className={`${
-                    errors.lastName ? "border-red-500" : "border-[#B3BAC5]"
+                    errors.last_name ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
                   placeholder="Enter Your Last Name"
-                  {...register("lastName", {
+                  {...register("last_name", {
                     required: "Please enter your last name",
                   })}
                 />
               </div>
-              {errors.lastName && (
+              {errors.last_name && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.lastName.message}
+                  {errors.last_name.message}
                 </p>
               )}
             </div>
@@ -111,7 +146,7 @@ const SignupPage = () => {
                   id="phone"
                   name="phone"
                   className={`${
-                    errors.lastName ? "border-red-500" : "border-[#B3BAC5]"
+                    errors.last_name ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
                   placeholder="Enter Your Phone Number"
                   {...register("phone", {
@@ -183,27 +218,27 @@ const SignupPage = () => {
             {/* auth-input-box  */}
             <div className="auth-input-box mt-7">
               <div>
-                <label htmlFor="confirm_password">Confirm Password</label>
+                <label htmlFor="password_confirmation">Confirm Password</label>
                 <input
                   type="password"
-                  id="confirm_password"
-                  name="confirm_password"
+                  id="password_confirmation"
+                  name="password_confirmation"
                   className={`${
-                    errors.confirm_password
+                    errors.password_confirmation
                       ? "border-red-500"
                       : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter confirm_password"
-                  {...register("confirm_password", {
+                  placeholder="Enter password_confirmation"
+                  {...register("password_confirmation", {
                     required: "Please enter your confirm password",
                     validate: (value) =>
                       value === watch("password") || "Passwords do not match",
                   })}
                 />
               </div>
-              {errors.confirm_password && (
+              {errors.password_confirmation && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.confirm_password.message}
+                  {errors.password_confirmation.message}
                 </p>
               )}
             </div>
@@ -211,14 +246,18 @@ const SignupPage = () => {
             <div className="mt-10">
               <button className="w-full">
                 <PrimaryButton
-                  text="Sign Up"
-                  className="p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center"
+                  text={isLoading ? "Signing Up..." : "Sign Up"}
+                  className={`p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center ${
+                    isLoading
+                      ? "opacity-30 pointer-events-none"
+                      : "pointer-events-auto opacity-100"
+                  }`}
                 />
               </button>
             </div>
             {/* new user  */}
             <div className="text-[18px] text-paragraph pt-14 pb-10 text-center">
-            Already have an account?{" "}
+              Already have an account?{" "}
               <Link
                 to={"/auth/login"}
                 className="font-bold text-primaryGreen hover:underline"

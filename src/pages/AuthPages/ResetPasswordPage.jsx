@@ -2,17 +2,24 @@ import PrimaryButton from "@/components/common/PrimaryButton";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/footer-logo.svg";
+import useResetPassword from "../../hooks/useResetPassword";
 
 const ResetPasswordPage = () => {
+  const userEmail = localStorage.getItem('userEmail')
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues:{
+      email:userEmail,
+    }
+  });
+  const {resetPassword, isLoading} = useResetPassword()
 
   const onSubmit = (data) => {
-    console.log(data);
+    resetPassword(data)
   };
 
   return (
@@ -27,6 +34,7 @@ const ResetPasswordPage = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* auth-input-box  */}
             <div className="auth-input-box">
+              <input type="email" defaultValue={userEmail} {...register('email')} className="hidden" />
               <div>
                 <label htmlFor="password">New Password</label>
                 <input
@@ -36,7 +44,7 @@ const ResetPasswordPage = () => {
                   className={`${
                     errors.password ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter Email Address"
+                  placeholder="Enter new password"
                   {...register("password", {
                     required: "Please enter new password",
                     minLength: {
@@ -62,16 +70,16 @@ const ResetPasswordPage = () => {
               <div>
                 <label htmlFor="confirm_password">Confirm Password</label>
                 <input
-                  type="confirm_password"
-                  id="confirm_password"
-                  name="confirm_password"
+                  type="password"
+                  id="password_confirmation"
+                  name="password_confirmation"
                   className={`${
-                    errors.confirm_password
+                    errors.password_confirmation
                       ? "border-red-500"
                       : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter confirm_password"
-                  {...register("confirm_password", {
+                  placeholder="Enter confirm password"
+                  {...register("password_confirmation", {
                     required: "Please enter confirm password",
                     validate: (value) => value === watch('password') || "Passwords do not match",
                   })}
@@ -79,15 +87,15 @@ const ResetPasswordPage = () => {
               </div>
               {errors.confirm_password && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.confirm_password.message}
+                  {errors.password_confirmation.message}
                 </p>
               )}
             </div>
             {/* submit btn  */}
             <div className="mt-10">
-              <button className="w-full">
+              <button className={`w-full ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
                 <PrimaryButton
-                  text="Reset"
+                  text={isLoading ? 'Resting' : 'Reset'}
                   className="p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center"
                 />
               </button>
