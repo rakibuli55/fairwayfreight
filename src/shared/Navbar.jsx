@@ -19,7 +19,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const [scrolled, setScrolled] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user, siteSettingsData } = useContext(AuthContext);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,7 +54,7 @@ const Navbar = () => {
           <Link to={"/"}>
             <img
               className="w-[223px] h-[48px]"
-              src={`${location.pathname === "/" ? Logo : Logov2}`}
+              src={`${location.pathname === "/" ? `${import.meta.env.VITE_SERVER_URL}/${siteSettingsData?.white_logo}` : `${import.meta.env.VITE_SERVER_URL}/${siteSettingsData?.footer_logo}`}`}
               alt="logo"
             />
           </Link>
@@ -95,7 +95,7 @@ const Navbar = () => {
                   Log in
                 </Link>
                 <Link
-                  to={"/signup"}
+                  to={"auth/signup"}
                   className={`flex items-center gap-2 text-base text-white font-semibold py-[10px] px-5 bg-primaryGreen rounded-[40px] duration-200 ease-in-out  ${
                     location.pathname === "/"
                       ? "hover:bg-white hover:text-primaryGreen border border-primaryGreen"

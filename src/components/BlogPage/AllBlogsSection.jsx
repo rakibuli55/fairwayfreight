@@ -1,41 +1,28 @@
 import Container from "../../container/Container";
 import TitleV2 from "../common/TitleV2";
-import imageOne from "../../assets/images/blog1.png"
-import imageTwo from "../../assets/images/blog2.png"
-import imageThree from "../../assets/images/blog3.png"
-import imageFour from "../../assets/images/blog4.png"
 import BlogCard from "./BlogCard";
-import PrimaryButton from "../common/PrimaryButton";
 import PaginationCommon from "../common/PaginationCommon";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../../api/index";
+import { useState } from "react";
 
-const blogData = [
-    {
-        id:1,
-        image:imageOne,
-        title:'The Best Golf Destinations for Winter Getaways',
-        url:'/blog-details'
-    },
-    {
-        id:2,
-        image:imageTwo,
-        title:'The Best Golf Destinations for Winter Getaways',
-        url:'/blog-details'
-    },
-    {
-        id:3,
-        image:imageThree,
-        title:'The Best Golf Destinations for Winter Getaways',
-        url:''
-    },
-    {
-        id:4,
-        image:imageFour,
-        title:'The Best Golf Destinations for Winter Getaways',
-        url:'/blog-details'
-    },
-]
 
 const AllBlogsSection = () => {
+
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const {data:blogData, isLoading:blogLoading} = useQuery({
+    queryKey:['blog-data', currentPage],
+    queryFn: async () => {
+      const res = await api.get(`/blogs?page=${currentPage}`);
+      return res?.data?.data;
+    }
+  });
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <section className="pt-[225px] pb-[10px]">
       <Container>
@@ -45,13 +32,13 @@ const AllBlogsSection = () => {
       </div>
         <div className="grid grid-cols-2 gap-x-[30px] gap-y-12">
             {
-                blogData.map((item) => (
+                blogData?.data?.map((item) => (
                     <BlogCard key={item?.id} item={item} />
                 ))
             }
         </div>
         <div className="mt-[60px]">
-            <PaginationCommon />
+            <PaginationCommon currentPage={currentPage} lastPage={blogData?.last_page} onPerChnage={handlePageChange} />
         </div>
       </Container>
     </section>

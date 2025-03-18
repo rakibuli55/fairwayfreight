@@ -1,31 +1,47 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const PaginationCommon = () => {
+const PaginationCommon = ({ currentPage, lastPage, onPerChnage }) => {
+
+  const handlePrevious = () => {
+    console.log('prev');
+    if (currentPage > 1) {
+      onPerChnage(currentPage - 1);
+    }
+  };
+  const handleNext = () => {
+    if (currentPage < lastPage) {
+      onPerChnage(currentPage + 1);
+      console.log('next');
+    }
+  };
+
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious href="#" onClick={handlePrevious} />
         </PaginationItem>
+        {Array.from({ length: lastPage }, (_, index) => (
+          <PaginationItem key={index + 1}>
+            <PaginationLink
+              className="pagination--link"
+              href="#"
+              isActive={currentPage === index + 1}
+              onClick={() => onPageChange(index + 1)}
+            >
+              {index + 1}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
         <PaginationItem>
-          <PaginationLink className="pagination--link" href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink className="pagination--link" href="#">2</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext href="#" onClick={handleNext} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

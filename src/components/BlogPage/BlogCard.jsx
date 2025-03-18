@@ -7,16 +7,16 @@ const BlogCard = ({ item }) => {
       <div className="h-[361px] w-full rounded-[16px] relative overflow-hidden">
         <img
           className="w-full h-full object-cover duration-200 ease-in-out"
-          src={item?.image}
+          src={`${import.meta.env.VITE_SERVER_URL}/${item?.image}`}
           alt="image"
         />
         <h1 className="py-2 px-[13px] text-sm text-heading bg-white rounded-[30px] absolute top-[14px] left-[14px]">
-          March 01, 2025
+          {item?.created_date}
         </h1>
       </div>
       <div className="flex items-center justify-between mt-5">
         <h3 className="text-[24px] font-bold  text-heading w-[526px] overflow-hidden">The Best Golf Destinations for Winter Getaways</h3>
-        <Link to={"/blog/1"} className="flex items-center text-base font-bold gap-2 text-primaryGreen">
+        <Link to={`/blog/${item?.slug}`} className="flex items-center text-base font-bold gap-2 text-primaryGreen">
           Read More
           <span className="text-[18px] rotate-[-40deg]">
             <FaArrowRight />

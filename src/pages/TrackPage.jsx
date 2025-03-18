@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ShipmentTrackingSection from '../components/TrackPage/ShipmentTrackingSection';
 import NewsLatterSection from '../components/common/NewsLatterSection';
+import { AuthContext } from '../context/index';
 
 const TrackPage = () => {
+  const {homePagedata, homeDataLoading} = useContext(AuthContext)
   return (
     <>
       <ShipmentTrackingSection />
-      <NewsLatterSection />
+      <NewsLatterSection newsLatterData={homePagedata?.subscription_section} />
     </>
   );
 };

@@ -362,6 +362,32 @@
   .order-table td{
     @apply p-6 text-base text-paragraph font-semibold;
   }
+  .service-cards-wrapper .card-inner:nth-child(odd) .service-card{
+    @apply flex-row-reverse
+  }
+  .sanitize-box h1 {
+    @apply text-[32px] font-bold;
+  }
+
+  .sanitize-box h2{
+    @apply text-[28px] font-bold;
+  }
+
+  .sanitize-box h3{
+    @apply text-[24px] font-bold;
+  }
+
+  .sanitize-box h4{
+    @apply text-[20px] font-bold;
+  }
+
+  .sanitize-box h5 {
+    @apply text-[16px] font-bold;
+  }
+
+  .sanitize-box h6 {
+    @apply text-[14px] font-bold;
+  }
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;

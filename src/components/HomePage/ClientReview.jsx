@@ -1,24 +1,20 @@
 
-import clientOne from '../../assets/images/c1.png'
-import clientTwo from '../../assets/images/c2.png'
-import clientThree from '../../assets/images/c3.png'
-import clientFour from '../../assets/images/c4.png'
-import clientFive from '../../assets/images/c5.png'
+
 import stars from '../../assets/images/stars.png'
 
-const ClientReview = () => {
+const ClientReview = ({data}) => {
   return (
     <div className='flex items-center gap-3'>
       <div className='flex items-end'>
-        <img className='w-[50px] h-[50px] rounded-full object-cover' src={clientOne} alt="img" />
-        <img className='w-[50px] h-[50px] rounded-full object-cover ml-[-12px]' src={clientTwo} alt="img" />
-        <img className='w-[50px] h-[50px] rounded-full object-cover ml-[-12px]' src={clientThree} alt="img" />
-        <img className='w-[50px] h-[50px] rounded-full object-cover ml-[-12px]' src={clientFour} alt="img" />
-        <img className='w-[50px] h-[50px] rounded-full object-cover ml-[-12px]' src={clientFive} alt="img" />
+        <img className='w-[50px] h-[50px] rounded-full object-cover' src={`${import.meta.env.VITE_SERVER_URL}/${data?.images?.image_1}`} alt="img" />
+        <img className='w-[50px] h-[50px] rounded-full object-cover' src={`${import.meta.env.VITE_SERVER_URL}/${data?.images?.image_2}`} alt="img" />
+        <img className='w-[50px] h-[50px] rounded-full object-cover' src={`${import.meta.env.VITE_SERVER_URL}/${data?.images?.image_3}`} alt="img" />
+        <img className='w-[50px] h-[50px] rounded-full object-cover' src={`${import.meta.env.VITE_SERVER_URL}/${data?.images?.image_4}`} alt="img" />
+        <img className='w-[50px] h-[50px] rounded-full object-cover' src={`${import.meta.env.VITE_SERVER_URL}/${data?.images?.image_5}`} alt="img" />
       </div>
       <div>
         <img className='w-[122px] h-5' src={stars} alt="star" />
-        <p className='text-base font-semibold text-paragraph mt-2'>From 120+ reviews</p>
+        <p className='text-base font-semibold text-paragraph mt-2'>From {data?.total_reviews}+ reviews</p>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { CgNotes } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa";
 import { GoClock } from "react-icons/go";
 
-const AuthorArea = () => {
+const AuthorArea = ({data}) => {
   return (
     <div className="flex items-center py-7 border-b border-[#4A4A4A]">
       {/* author details  */}
@@ -13,7 +13,7 @@ const AuthorArea = () => {
         </span>
         <div>
           <p className="text-sm uppercase text-primaryGreen font-bold">Date</p>
-          <span className="inline-block mt-1 text-paragraph">Feb 01, 2025</span>
+          <span className="inline-block mt-1 text-paragraph">{data?.created_date}</span>
         </div>
       </div>
       {/* author details  */}
@@ -26,7 +26,7 @@ const AuthorArea = () => {
             AUTHOR NAME
           </p>
           <span className="inline-block mt-0 text-paragraph">
-            Cameron Williamson
+            {data?.author_name}
           </span>
         </div>
       </div>
@@ -40,7 +40,7 @@ const AuthorArea = () => {
             SUBJECT
           </p>
           <span className="inline-block mt-1 text-paragraph">
-            Packaging Insights
+            {data?.subject}
           </span>
         </div>
       </div>
