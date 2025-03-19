@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import PrimaryButton from "../../components/common/PrimaryButton";
 import BackButton from "../../components/dashboard/common/BackButton";
 import MainTitle from "../../components/dashboard/common/MainTitle";
-import PrimaryButton from "../../components/common/PrimaryButton";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 
 const ChangePasswordPage = () => {
   const {
@@ -10,9 +13,21 @@ const ChangePasswordPage = () => {
     watch,
     formState: { errors },
   } = useForm();
+  const [isLoading, setisLoading] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      setisLoading(true);
+      const response = await axiosSecure.post("/users/password/change", data);
+      if(response.status === 200){
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message)
+    } finally {
+      setisLoading(false)
+    }
   };
 
   return (
@@ -33,13 +48,13 @@ const ChangePasswordPage = () => {
             >
               {/* auth-input-box  */}
               <div className="auth-input-box">
-                <label htmlFor="current-password">Current Password</label>
+                <label htmlFor="current_password">Current Password</label>
                 <input
                   type="password"
                   placeholder="Enter New Password"
-                  name="currentPassword"
-                  id="currentPassword"
-                  {...register("currentPassword", {
+                  name="current_password"
+                  id="current_password"
+                  {...register("current_password", {
                     required: "Please enter current password",
                     minLength: {
                       value: 8,
@@ -52,9 +67,9 @@ const ChangePasswordPage = () => {
                     },
                   })}
                 />
-                {errors.currentPassword && (
+                {errors.current_password && (
                   <p className="error-message">
-                    {errors.currentPassword.message}
+                    {errors.current_password.message}
                   </p>
                 )}
               </div>
@@ -64,9 +79,9 @@ const ChangePasswordPage = () => {
                 <input
                   type="password"
                   placeholder="Enter New Password"
-                  name="newPassword"
-                  id="newPassword"
-                  {...register("newPassword", {
+                  name="password"
+                  id="password"
+                  {...register("password", {
                     required: "Please enter new password",
                     minLength: {
                       value: 8,
@@ -79,10 +94,8 @@ const ChangePasswordPage = () => {
                     },
                   })}
                 />
-                {errors.newPassword && (
-                  <p className="error-message">
-                    {errors.newPassword.message}
-                  </p>
+                {errors.password && (
+                  <p className="error-message">{errors.password.message}</p>
                 )}
               </div>
               {/* auth-input-box  */}
@@ -91,21 +104,26 @@ const ChangePasswordPage = () => {
                 <input
                   type="password"
                   placeholder="Enter New Password"
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  {...register("confirmPassword", {
+                  name="password_confirmation"
+                  id="password_confirmation"
+                  {...register("password_confirmation", {
                     required: "Please enter confirm password",
-                    validate: (value) => value === watch('newPassword') || "Passwords do not match",
+                    validate: (value) =>
+                      value === watch("password") ||
+                      "Passwords do not match",
                   })}
                 />
-                {errors.confirmPassword && (
+                {errors.password_confirmation && (
                   <p className="error-message">
-                    {errors.confirmPassword.message}
+                    {errors.password_confirmation.message}
                   </p>
                 )}
               </div>
-              <button type="submit" className="w-full text-center mt-10">
-                <PrimaryButton text="Save" className="py-4 px-8 w-full bg-primaryGreen rounded-[50px] text-[18px] justify-center text-white hover:bg-transparent border-[2px] border-primaryGreen hover:text-primaryGreen" />
+              <button type="submit" className={`w-full text-center mt-10 ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
+                <PrimaryButton
+                  text={isLoading ? 'Trying to save' : 'Save'}
+                  className="py-4 px-8 w-full bg-primaryGreen rounded-[50px] text-[18px] justify-center text-white hover:bg-transparent border-[2px] border-primaryGreen hover:text-primaryGreen"
+                />
               </button>
             </form>
           </div>

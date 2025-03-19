@@ -11,6 +11,8 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import BackButton from "../../components/dashboard/common/BackButton";
 import MainTitle from "../../components/dashboard/common/MainTitle";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 
 const AddressBookPage = () => {
   const {
@@ -20,9 +22,25 @@ const AddressBookPage = () => {
     formState: { errors },
   } = useForm();
   const [selectedAddress, setSelectedAddress] = useState("home");
+  const axiosSecure = useAxiosSecure();
+  const [isLoading, setIsLoading] = useState(false)
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    data.type = selectedAddress
+    data.address = data.streetAddress + data.addresApartment;
+    delete data.streetAddress;
+    delete data.addresApartment;
+    setIsLoading(true)
+    try{
+      const response = await axiosSecure.post('add-address', data);
+      if(response.status === 200){
+        toast.success(response.data.message)
+      }
+    }catch(error){
+      toast.error(error.response.data.message);
+    }finally{
+      setIsLoading(false)
+    }
   };
 
   return (
@@ -48,7 +66,7 @@ const AddressBookPage = () => {
                     Country <span>*</span>
                   </label>
                   <Controller
-                    name="originCountry"
+                    name="country"
                     control={control}
                     rules={{ required: "Please select a country" }}
                     render={({ field }) => (
@@ -77,50 +95,50 @@ const AddressBookPage = () => {
                     )}
                   />
                 </div>
-                {errors.originCountry && (
+                {errors.country && (
                   <p className="error-message">
-                    {errors.originCountry.message}
+                    {errors.country.message}
                   </p>
                 )}
               </div>
               {/* sender name  */}
               <div className="shipment-input-box mt-5">
                 <div>
-                  <label htmlFor="senderName" className="shipment-label">
+                  <label htmlFor="sender_name" className="shipment-label">
                     Sender Name <span>*</span>
                   </label>
                   <input
                     type="text"
-                    name="senderName"
-                    id="senderName"
+                    name="sender_name"
+                    id="sender_name"
                     placeholder="Enter Your Full Name"
                     className="shipment-input"
-                    {...register("senderName", {
+                    {...register("sender_name", {
                       required: "Please enter a sender name",
                     })}
                   />
                 </div>
-                {errors.senderName && (
-                  <p className="error-message">{errors.senderName.message}</p>
+                {errors.sender_name && (
+                  <p className="error-message">{errors.sender_name.message}</p>
                 )}
               </div>
-              {/* company name  */}
+              {/* company_name name  */}
               <div className="shipment-input-box mt-5">
                 <div>
-                  <label htmlFor="company" className="shipment-label">
-                    Company
+                  <label htmlFor="company_name" className="shipment-label">
+                    company_name
                   </label>
                   <input
                     type="text"
-                    name="company"
-                    id="company"
-                    placeholder="Company Name"
+                    name="company_name"
+                    id="company_name"
+                    placeholder="company_name Name"
                     className="shipment-input"
-                    {...register("company", {required:'Please enter your company name.'})}
+                    {...register("company_name", {required:'Please enter your company_name name.'})}
                   />
                 </div>
-                {errors.company && (
-                  <p className="error-message">{errors.company.message}</p>
+                {errors.company_name && (
+                  <p className="error-message">{errors.company_name.message}</p>
                 )}
               </div>
               {/* address  */}
@@ -169,51 +187,51 @@ const AddressBookPage = () => {
               <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6">
                 <div className="overflow-hidden">
                   <div>
-                    <label htmlFor="originZip" className="shipment-label">
+                    <label htmlFor="zip" className="shipment-label">
                       Zip <span>*</span>
                     </label>
                     <input
                       type="number"
                       placeholder="Zip"
-                      name="originZip"
-                      id="originZip"
+                      name="zip"
+                      id="zip"
                       className="shipment-input"
-                      {...register("originZip", {
+                      {...register("zip", {
                         required: "Enter zip code",
                       })}
                     />
                   </div>
-                  {errors.originZip && (
-                    <p className="error-message">{errors.originZip.message}</p>
+                  {errors.zip && (
+                    <p className="error-message">{errors.zip.message}</p>
                   )}
                 </div>
                 <div className="overflow-hidden">
                   <div>
-                    <label htmlFor="originCity" className="shipment-label">
+                    <label htmlFor="city" className="shipment-label">
                       City <span>*</span>
                     </label>
                     <input
                       type="text"
                       placeholder="City"
-                      name="originCity"
-                      id="originCity"
+                      name="city"
+                      id="city"
                       className="shipment-input"
-                      {...register("originCity", {
+                      {...register("city", {
                         required: "Enter city",
                       })}
                     />
                   </div>
-                  {errors.originCity && (
-                    <p className="error-message">{errors.originCity.message}</p>
+                  {errors.city && (
+                    <p className="error-message">{errors.city.message}</p>
                   )}
                 </div>
                 <div className="overflow-hidden">
                   <div>
-                    <label htmlFor="originState" className="shipment-label">
+                    <label htmlFor="state" className="shipment-label">
                       State <span>*</span>
                     </label>
                     <Controller
-                      name="originState"
+                      name="state"
                       control={control}
                       rules={{ required: "Please select a state" }}
                       render={({ field }) => (
@@ -245,9 +263,9 @@ const AddressBookPage = () => {
                       )}
                     />
                   </div>
-                  {errors.originState && (
+                  {errors.state && (
                     <p className="error-message">
-                      {errors.originState.message}
+                      {errors.state.message}
                     </p>
                   )}
                 </div>
@@ -255,29 +273,29 @@ const AddressBookPage = () => {
               {/* phone */}
               <div className="shipment-input-box mt-5">
                 <div>
-                  <label htmlFor="originPhone" className="shipment-label">
+                  <label htmlFor="phone" className="shipment-label">
                     Phone <span>*</span>
                   </label>
                   <input
                     type="text"
-                    name="originPhone"
-                    id="originPhone"
+                    name="phone"
+                    id="phone"
                     placeholder="Enter Your Phone Number"
                     className="shipment-input"
-                    {...register("originPhone", {
+                    {...register("phone", {
                       required: "Please enter your phone",
                     })}
                   />
                 </div>
-                {errors.originPhone && (
-                  <p className="error-message">{errors.originPhone.message}</p>
+                {errors.phone && (
+                  <p className="error-message">{errors.phone.message}</p>
                 )}
               </div>
             </div>
             <div>
-              <button type="submit" className="mt-10">
+              <button type="submit" className={`mt-10 ${isLoading ? 'opacity-50 pointer-events-none':'opacity-100 pointer-events-auto'}`}>
                 <PrimaryButton
-                  text="Save"
+                  text={isLoading ? 'Saving Address' : 'Save Address'}
                   className="py-[14px] px-10 rounded-[40px] bg-primaryGreen border-[2px] border-primaryGreen text-white text-[18px] font-bold duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen"
                 />
               </button>

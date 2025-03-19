@@ -1,31 +1,27 @@
-import React from 'react';
 
-const UserProfileDetails = () => {
+
+const UserProfileDetails = ({user}) => {
   return (
     <div className='mt-10'>
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>First Name</span> <span>:</span></p>
-        <p className='font-bold'>Robert</p>
+        <p className='font-bold'>{user?.first_name}</p>
       </div>
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Last Name</span> <span>:</span></p>
-        <p className='font-bold'>Fox</p>
+        <p className='font-bold'>{user?.last_name}</p>
       </div>
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Country of Residence</span> <span>:</span></p>
-        <p className='font-bold'>United States</p>
+        <p className='font-bold'>{user?.country !== null ? user?.country : 'Not set yet'}</p>
       </div>
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Mobile Phone</span> <span>:</span></p>
-        <p className='font-bold'>+1 502-640-2067</p>
+        <p className='font-bold'>{user?.phone}</p>
       </div>
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Email</span> <span>:</span></p>
-        <p className='font-bold'> robertfox@gmail.com</p>
-      </div>
-      <div className='user-profile-pair'>
-        <p className='key flex items-center justify-between'><span>Registration date</span> <span>:</span></p>
-        <p className='font-bold'>02/08/2025</p>
+        <p className='font-bold'>{user?.email}</p>
       </div>
       {/* <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Packages shipped</span> <span>:</span></p>
@@ -33,7 +29,7 @@ const UserProfileDetails = () => {
       </div> */}
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Default address</span> <span>:</span></p>
-        <p className='font-bold'>1901 Thornridge Cir. Shiloh, Hawaii 81063</p>
+        <p className='font-bold'>{user?.default_address !== null ? user?.default_address : 'Not set yet'}</p>
       </div>
       {/* <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Default currency</span> <span>:</span></p>

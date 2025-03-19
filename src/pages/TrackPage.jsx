@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import ShipmentTrackingSection from '../components/TrackPage/ShipmentTrackingSection';
 import NewsLatterSection from '../components/common/NewsLatterSection';
 import { AuthContext } from '../context/index';

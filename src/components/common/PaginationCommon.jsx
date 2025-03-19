@@ -10,7 +10,6 @@ import {
 const PaginationCommon = ({ currentPage, lastPage, onPerChnage }) => {
 
   const handlePrevious = () => {
-    console.log('prev');
     if (currentPage > 1) {
       onPerChnage(currentPage - 1);
     }
@@ -18,7 +17,6 @@ const PaginationCommon = ({ currentPage, lastPage, onPerChnage }) => {
   const handleNext = () => {
     if (currentPage < lastPage) {
       onPerChnage(currentPage + 1);
-      console.log('next');
     }
   };
 
@@ -34,7 +32,7 @@ const PaginationCommon = ({ currentPage, lastPage, onPerChnage }) => {
               className="pagination--link"
               href="#"
               isActive={currentPage === index + 1}
-              onClick={() => onPageChange(index + 1)}
+              onClick={() => onPerChnage(index + 1)}
             >
               {index + 1}
             </PaginationLink>

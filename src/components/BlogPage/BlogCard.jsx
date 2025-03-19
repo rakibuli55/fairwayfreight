@@ -15,7 +15,7 @@ const BlogCard = ({ item }) => {
         </h1>
       </div>
       <div className="flex items-center justify-between mt-5">
-        <h3 className="text-[24px] font-bold  text-heading w-[526px] overflow-hidden">The Best Golf Destinations for Winter Getaways</h3>
+        <h3 className="text-[24px] font-bold  text-heading w-[526px] overflow-hidden">{item?.title}</h3>
         <Link to={`/blog/${item?.slug}`} className="flex items-center text-base font-bold gap-2 text-primaryGreen">
           Read More
           <span className="text-[18px] rotate-[-40deg]">

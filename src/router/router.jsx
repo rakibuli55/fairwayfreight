@@ -21,6 +21,7 @@ import HomePage from "../pages/HomePage";
 import HowItWorksPage from "../pages/HowItWorksPage";
 import ShipPage from "../pages/ShipPage";
 import TrackPage from "../pages/TrackPage";
+import PrivateRoute from "../routes/PrivateRoute";
 import PublicRoute from "../routes/PublicRoute";
 
 const router = createBrowserRouter([
@@ -97,10 +98,10 @@ const router = createBrowserRouter([
       {
         path: "verify-otp",
         element: (
-            <PublicRoute>
-                <VerifyOtpPage />
-            </PublicRoute>
-        )
+          <PublicRoute>
+            <VerifyOtpPage />
+          </PublicRoute>
+        ),
       },
     ],
   },
@@ -110,31 +111,59 @@ const router = createBrowserRouter([
     children: [
       {
         path: "my-account",
-        element: <MyAccountPage />,
+        element: (
+          <PrivateRoute>
+            <MyAccountPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "shipment-history",
-        element: <ShipmentHistoryPage />,
+        element: (
+          <PrivateRoute>
+            <ShipmentHistoryPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "change-password",
-        element: <ChangePasswordPage />,
+        element: (
+          <PrivateRoute>
+            <ChangePasswordPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "update-information",
-        element: <UpdateUserInformation />,
+        element: (
+          <PrivateRoute>
+            <UpdateUserInformation />
+          </PrivateRoute>
+        ),
       },
       {
         path: "address-book",
-        element: <AddressBookPage />,
+        element: (
+          <PrivateRoute>
+            <AddressBookPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "add-new-address",
-        element: <AddNewAddressPage />,
+        element: (
+          <PrivateRoute>
+            <AddNewAddressPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "refer-friends",
-        element: <ReferFriendsPage />,
+        element: (
+          <PrivateRoute>
+            <ReferFriendsPage />
+          </PrivateRoute>
+        ),
       },
     ],
   },

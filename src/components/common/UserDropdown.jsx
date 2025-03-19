@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { NavLink, useLocation } from "react-router-dom";
 import defaultAvatar from "../../assets/images/user-profile.png";
 import useLogout from "../../hooks/useLogout";
+import { AuthContext } from "../../context/index";
 const menuItems = [
   {
     id: 1,
@@ -30,7 +31,10 @@ const UserDropdown = () => {
   const buttonRef = useRef(null);
   const dropdownRef = useRef(null);
   const {logout} = useLogout();
-  const location = useLocation()
+  const location = useLocation();
+  const {user} =  useContext(AuthContext);
+
+  const userAvatar = user?.avatar !== null ? `${import.meta.env.VITE_SERVER_URL}/${user?.avatar}`: defaultAvatar;
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -59,7 +63,7 @@ const UserDropdown = () => {
       >
         <img
           className="w-[40px] h-[40px] rounded-full object-cover"
-          src={defaultAvatar}
+          src={userAvatar}
           alt="defaultAvatar"
         />
         <p className="text-[20px]">

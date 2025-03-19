@@ -2,12 +2,30 @@ import { LuCirclePlus } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import BackButton from "../../components/dashboard/common/BackButton";
 import MainTitle from "../../components/dashboard/common/MainTitle";
-import EditAddressButton from "@/components/dashboard/AddressBookPage/EditAddressButton";
+import EditAddressButton from "../../components/dashboard/AddressBookPage/EditAddressButton";
 import { IoHome } from "react-icons/io5";
 import { HiBuildingLibrary } from "react-icons/hi2";
-import UserProfileDetails from "@/components/dashboard/myAccountPage/UserProfileDetails";
+import AddedAddressBook from "../../components/dashboard/AddressBookPage/AddedAddressBook";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useState } from "react";
 
 const AddressBookPage = () => {
+  const axiosSecure = useAxiosSecure();
+  const [isEdit, setIsEdit] = useState(false);
+
+  const {data:addressList,isLoading:addressListLoading} = useQuery({
+    queryKey:['address-data'],
+    queryFn: async () => {
+      const response = await axiosSecure.get('/address-list');
+      return response?.data?.data;
+    },
+    retry:1,
+  });
+
+  const home_address = addressList?.filter(address => address.type === 'home');
+  const golf_club_Address = addressList?.filter(address => address.type === 'golf_club');
+
   return (
     <section className="bg-white p-9 rounded-[16px]">
       <div>
@@ -24,12 +42,23 @@ const AddressBookPage = () => {
             {/* home/business address  */}
             <div className="flex-1">
               <EditAddressButton text="Home/Business" icon={<IoHome />} type="home/business" />
-              <UserProfileDetails />
+              {
+                home_address?.length > 0 ? (home_address?.map((address) => (
+                  <AddedAddressBook key={address.id} address={address} />
+                ))) : (<p className="text-[18px] font-semibold mt-5 text-center">No address added</p>)
+                
+              }
+              
             </div>
             {/* Golf Club/Resort address  */}
             <div className="flex-1">
               <EditAddressButton text="Golf Club/Resort" icon={<HiBuildingLibrary />} type="golf/club" />
-              <UserProfileDetails />
+              {
+                golf_club_Address?.length > 0 ? (golf_club_Address?.map((address) => (
+                  <AddedAddressBook key={address.id} address={address} />
+                ))) : (<p className="text-[18px] font-semibold mt-5 text-center">No address added</p>)
+                
+              }
             </div>
           </div>
         </div>

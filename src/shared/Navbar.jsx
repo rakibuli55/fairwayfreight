@@ -2,8 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import Logo from "../assets/logo/Logo.svg";
-import Logov2 from "../assets/logo/footer-logo.svg";
 import UserDropdown from "../components/common/UserDropdown";
 import Container from "../container/Container";
 import { AuthContext } from "../context/index";

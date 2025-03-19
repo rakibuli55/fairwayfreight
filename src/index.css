@@ -305,7 +305,8 @@
   .auth-input-box label {
     @apply text-[18px] font-bold text-heading mb-2 block;
   }
-  .auth-input-box input {
+  .auth-input-box input,
+  .auth-input-box textarea {
     @apply p-5 text-[18px] text-heading border rounded-[12px] w-full focus:outline-none;
   }
   .shipment-form-layout {

@@ -4,6 +4,7 @@ import { FaRegAddressBook, FaRegUser } from "react-icons/fa";
 import { TbUsersPlus } from "react-icons/tb";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo/footer-logo.svg";
+import useLogout from "../../hooks/useLogout";
 
 const Sidebar = () => {
   const menuItems = [
@@ -34,8 +35,7 @@ const Sidebar = () => {
   ];
 
   const { pathname } = useLocation();
-
-  console.log(pathname);
+  const {logout} = useLogout()
 
   return (
     <div className="p-[46px] pt-[67px] bg-white fixed top-0 left-0 h-screen w-[345px] z-[20]">
@@ -56,7 +56,7 @@ const Sidebar = () => {
             </NavLink>
           </li>
         ))}
-        <li className="flex items-center gap-4 py-5 px-7 rounded-[16px] text-[18px] text-paragraph font-semibold mt-5 capitalize duration-200 ease-in-out hover:bg-red-400 hover:text-white cursor-pointer">
+        <li className="flex items-center gap-4 py-5 px-7 rounded-[16px] text-[18px] text-paragraph font-semibold mt-5 capitalize duration-200 ease-in-out hover:bg-red-400 hover:text-white cursor-pointer" onClick={() => logout()}>
           <span className="text-[20px]">
             <BiLogOut />
           </span>

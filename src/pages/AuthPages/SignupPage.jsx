@@ -194,7 +194,7 @@ const SignupPage = () => {
                   className={`${
                     errors.password ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter Email Address"
+                  placeholder="Enter password"
                   {...register("password", {
                     required: "Please enter your password",
                     minLength: {
@@ -228,7 +228,7 @@ const SignupPage = () => {
                       ? "border-red-500"
                       : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter password_confirmation"
+                  placeholder="Enter confirm password"
                   {...register("password_confirmation", {
                     required: "Please enter your confirm password",
                     validate: (value) =>
