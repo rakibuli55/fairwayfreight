@@ -1,12 +1,15 @@
+import { useContext } from 'react';
 import NewsLatterSection from '../components/common/NewsLatterSection';
 import ScheduleShipment from '../components/ShipPage/ScheduleShipment';
-import React from 'react';
+import { AuthContext } from '../context/index';
+
 
 const ShipPage = () => {
+  const { homePagedata, homeDataLoading } = useContext(AuthContext);
   return (
     <>
       <ScheduleShipment />
-      <NewsLatterSection />
+      <NewsLatterSection newsLatterData={homePagedata?.subscription_section} />
     </>
   );
 };

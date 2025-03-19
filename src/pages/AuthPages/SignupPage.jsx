@@ -102,7 +102,7 @@ const SignupPage = () => {
                   className={`${
                     errors.first_name ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter Your First Name"
+                  placeholder="Enter your first name"
                   {...register("first_name", {
                     required: "Please enter your first name",
                   })}
@@ -125,7 +125,7 @@ const SignupPage = () => {
                   className={`${
                     errors.last_name ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter Your Last Name"
+                  placeholder="Enter your last name"
                   {...register("last_name", {
                     required: "Please enter your last name",
                   })}
@@ -148,7 +148,7 @@ const SignupPage = () => {
                   className={`${
                     errors.last_name ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter Your Phone Number"
+                  placeholder="Enter your phone number"
                   {...register("phone", {
                     required: "Please enter your phone number",
                   })}
@@ -171,7 +171,7 @@ const SignupPage = () => {
                   className={`${
                     errors.email ? "border-red-500" : "border-[#B3BAC5]"
                   }`}
-                  placeholder="Enter Email Address"
+                  placeholder="Enter email address"
                   {...register("email", {
                     required: "Please enter your email address",
                   })}
