@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
+import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import UserDropdown from "../components/common/UserDropdown";
 import Container from "../container/Container";
@@ -18,6 +19,7 @@ const Navbar = () => {
 
   const [scrolled, setScrolled] = useState(false);
   const { user, siteSettingsData } = useContext(AuthContext);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,24 +48,49 @@ const Navbar = () => {
           className={`pb-5 border-b ${
             location.pathname === "/" ? "border-[#F6F6F6]" : "border-[#4d4d4d]"
           } flex items-center justify-between duration-200 ease-in-out ${
-            scrolled ? "pt-5 border-none" : "pt-10"
+            scrolled
+              ? "pt-5 border-none"
+              : "pt-10 custom-2xl:pt-7 custom-lg:pt-6 max-md:pt-5"
           }`}
         >
           <Link to={"/"}>
             <img
-              className="w-[223px] h-[48px]"
-              src={`${location.pathname === "/" ? `${import.meta.env.VITE_SERVER_URL}/${siteSettingsData?.white_logo}` : `${import.meta.env.VITE_SERVER_URL}/${siteSettingsData?.footer_logo}`}`}
+              className="w-[223px] h-[48px] custom-lg:w-[190px] max-md:w-[170px]"
+              src={`${
+                location.pathname === "/"
+                  ? `${import.meta.env.VITE_SERVER_URL}/${
+                      siteSettingsData?.white_logo
+                    }`
+                  : `${import.meta.env.VITE_SERVER_URL}/${
+                      siteSettingsData?.footer_logo
+                    }`
+              }`}
               alt="logo"
             />
           </Link>
           <div className="flex items-center gap-[280px]">
             {/* menu  */}
-            <ul className="flex items-center gap-[64px]">
+            <ul
+              className={`flex items-center gap-[64px] custom-lg:gap-10 max-md:fixed max-md:top-0 max-md:left-0 max-md:h-full max-md:bg-primaryGreen max-md:w-[260px] max-md:flex-col max-md:gap-4 max-md:items-start max-md:pl-8 max-md:pt-[20px] duration-200 ease-in-out ${
+                sidebarOpen
+                  ? "max-md:opacity-100 max-md:visible max-md:left-0"
+                  : "max-md:opacity-0 max-md:invisible max-md:left-[-260px]"
+              }`}
+            >
+              <Link to={"/"} className="hidden max-md:block max-md:pb-6">
+                <img
+                  className="w-[223px] h-[48px] custom-lg:w-[190px] max-md:w-[170px]"
+                  src={`${import.meta.env.VITE_SERVER_URL}/${
+                          siteSettingsData?.white_logo
+                        }`}
+                  alt="logo"
+                />
+              </Link>
               {menuItems.map((item) => (
                 <li key={item?.name}>
                   <NavLink
                     to={`${item?.url}`}
-                    className={`inline-block text-[20px] ${
+                    className={`inline-block text-[20px] max-md:!text-white ${
                       location.pathname === "/" ? "text-white" : "text-heading"
                     } capitalize duration-200 ease-in-out hover:opacity-60 ${
                       location.pathname === item.url ? "navlink-active" : ""
@@ -94,7 +121,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to={"auth/signup"}
-                  className={`flex items-center gap-2 text-base text-white font-semibold py-[10px] px-5 bg-primaryGreen rounded-[40px] duration-200 ease-in-out  ${
+                  className={`flex items-center gap-2 text-base text-white font-semibold py-[10px] px-5 bg-primaryGreen rounded-[40px] duration-200 ease-in-out max-md:hidden  ${
                     location.pathname === "/"
                       ? "hover:bg-white hover:text-primaryGreen border border-primaryGreen"
                       : "hover:text-primaryGreen hover:bg-transparent border border-primaryGreen"
@@ -107,6 +134,12 @@ const Navbar = () => {
                 </Link>
               </>
             )}
+            <p
+              className="text-[26px] hidden max-md:block text-white"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <HiOutlineMenuAlt3 />
+            </p>
           </div>
         </div>
       </Container>

@@ -18,7 +18,7 @@ const HomePage = () => {
     <>
       <HeroSection data={homePagedata?.hero_section} />
       <ReviewPartnerSection reviewData={homePagedata?.review_section} />
-      <div className="bg-sectionLight py-[120px]">
+      <div className="bg-sectionLight py-[120px] custom-2xl:py-[100px] custom-xl:py-[100px] custom-lg:py-[100px]">
         <HowItWorks worksData={homePagedata?.working_process} />
       </div>
       <OurServicesSection servicesData={homePagedata?.services} />

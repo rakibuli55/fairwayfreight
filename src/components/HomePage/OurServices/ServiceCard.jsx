@@ -2,8 +2,8 @@ import DOMPurify from 'dompurify';
 
 const ServiceCard = ({item}) => {
   return (
-    <div className={`flex items-center gap-[150px] service-card ${item?.isReversed ? 'flex-row-reverse' : ''}`}>
-     <div className="h-[525px] rounded-[20px] overflow-hidden img w-[50%]">
+    <div className={`flex items-center gap-[150px] custom-2xl:gap-20 custom-xl:gap-[60px] custom-lg:gap-10 service-card ${item?.isReversed ? 'flex-row-reverse' : ''}`}>
+     <div className="h-[525px] custom-xl:h-[480px] rounded-[20px] overflow-hidden img w-[50%]">
         <img className="w-full h-full object-cover duration-200 ease-in-out" src={`${import.meta.env.VITE_SERVER_URL}/${item?.image}`} alt="img" />
      </div>
      <div className="w-[50%]">

@@ -25,9 +25,9 @@ const NewsLatterSection = ({ newsLatterData }) => {
     }
 
   return (
-    <section className="mt-[110px]">
+    <section className="mt-[110px] custom-2xl:mt-[100px] custom-xl:mt-[100px] custom-lg:mt-[100px]">
       <div className="flex justify-start items-start gap-[34px] relative">
-        <div className="w-[1009px] h-[697px] overflow-hidden rounded-image newslatter-image">
+        <div className="w-[1009px] h-[697px] newslatter-image">
           <img
             className="w-full h-full object-cover banner-img"
             src={`${import.meta.env.VITE_SERVER_URL}/${
@@ -36,20 +36,20 @@ const NewsLatterSection = ({ newsLatterData }) => {
             alt="newsLatterBanner"
           />
         </div>
-        <div className="absolute right-0 top-0 bottom-0 w-[987px]">
+        <div className="absolute right-0 top-0 bottom-0 w-[987px] extra-large:w-[890px] h-[740px] custom-2xl:w-[823px] custom-xl:w-[823px] custom-lg:w-[650px]">
           <img
-            className="w-full h-[740px] right-0 absolute top-0 bottom-0"
+            className="w-full h-full right-0 absolute top-0 bottom-0"
             src={newsLatterShapeRight}
             alt=""
           />
-          <div className="z-[1] absolute right-[200px] top-1/2 translate-y-[-50%]">
+          <div className="z-[1] absolute right-[200px] custom-2xl:right-[100px] custom-xl:right-[100px] top-1/2 translate-y-[-50%] custom-lg:right-[70px]">
             <h4 className="text-[48px] font-tungsten font-bold text-heading">
               {newsLatterData?.title}
             </h4>
             <p className="text-[18px] text-paragraph mt-1">
               {newsLatterData?.sub_title}
             </p>
-            <form className="w-[484px]" onSubmit={handleSubmit(onSubmitForm)}>
+            <form className="w-[484px] custom-lg:w-[400px]" onSubmit={handleSubmit(onSubmitForm)}>
               <input
                 type="email"
                 placeholder="Enter your email"

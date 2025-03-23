@@ -60,6 +60,17 @@ export default {
   				'sans-serif'
   			]
   		},
+		  screens: {
+			"custom-xs": { min: "360px", max: "479px" },
+			"custom-sm": { min: "480px", max: "575px" },
+			"custom-md": { min: "576px", max: "768px" },
+			"max-md": { max: "991px" },
+			"custom-2xl": { min: "1366px", max: "1500px" },
+			"max-xl": { max: "1200px" },
+			"custom-xl": { min: "1200px", max: "1365px" },
+			"custom-lg": { min: "992px", max: "1199px" },
+			"extra-large": {min: "1440px", max: "1919px"}
+		  },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

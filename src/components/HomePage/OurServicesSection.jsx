@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 const OurServicesSection = ({servicesData}) => {
   return (
-    <section className="py-[120px]">
+    <section className="py-[120px] custom-2xl:py-[100px] custom-xl:py-[100px] custom-lg:py-[100px]">
       <Container>
         <div>
           {/* title  */}
