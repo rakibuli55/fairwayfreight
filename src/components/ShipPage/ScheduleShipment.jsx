@@ -26,7 +26,6 @@ import { useLocation } from "react-router-dom";
 const ScheduleShipment = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const [allCountries, setAllCountries] = useState(null)
 
   const addressFrom = queryParams.get("address_from");
   const addressTo = queryParams.get("address_to");
@@ -34,6 +33,8 @@ const ScheduleShipment = () => {
   // Parse the JSON string back into an object
   const addressFromObj = addressFrom ? JSON.parse(decodeURIComponent(addressFrom)) : null;
   const addressToObj = addressTo ? JSON.parse(decodeURIComponent(addressTo)) : null;
+
+  console.log(addressToObj)
 
   const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm({
     // Set initial empty values first
@@ -44,12 +45,18 @@ const ScheduleShipment = () => {
       luggageBags: [
         { id: 1, size: "", packaging: "", insurance: "", otherInfo: "" },
       ],
-      originCountry:'United States',
+      originCountry: addressFromObj?.country || 'US',
       originStreetAddress:addressFromObj?.formated_address || '',
+      originAddresApartment:addressFromObj?.street1 || '',
+      originZip:addressFromObj?.zip || '',
+      originCity: addressFromObj?.city || '',
+      destinationCountry: addressToObj?.country || 'US',
+      destinationStreetAddress:addressToObj?.formated_address || '',
+      destinationAddresApartment:addressToObj?.street1 || '',
+      destinationZip:addressToObj?.zip || '',
+      destinationCity: addressToObj?.city || ''
     }
   });
-
-  console.log(addressFromObj);
 
   const [origin, setOrigin] = useState("home");
   const [destination, setDestination] = useState("home");
@@ -76,6 +83,13 @@ const ScheduleShipment = () => {
     control,
     name: "luggageBags",
   });
+
+  const [allCountries, setAllCountries] = useState(null)
+  const getCountryByShortName = (countryCode) => {
+    const matchedCountry = allCountries?.find((country) => country.iso2 === countryCode);
+    return matchedCountry?.name;
+  }
+
   // increaseQuantity
   const increaseQuantity = (event, type) => {
     event.preventDefault();
@@ -145,26 +159,27 @@ const ScheduleShipment = () => {
       setStates(response.data.data.states);
     }
   };
-  // originCountry
+  // call originCountry states
   const originCountry = watch("originCountry");
   useEffect(() => {
     if (originCountry) {
-      fetchStates(originCountry, setOriginStates);
+      const fullCountry = getCountryByShortName(originCountry)
+      fetchStates(fullCountry, setOriginStates);
     }
-  }, [originCountry]);
+  }, [originCountry, allCountries]);
+  // call destinationCountry states
   const destinationCountry = watch("destinationCountry");
   useEffect(() => {
     if (destinationCountry) {
-      fetchStates(destinationCountry, setDestinationStates);
+      const fullCountry = getCountryByShortName(destinationCountry)
+      fetchStates(fullCountry, setDestinationStates);
     }
-  }, [destinationCountry]);
+  }, [destinationCountry, allCountries]);
 
   // onSubmit
   const onSubmit = (data) => {
     console.log(data);
   };
-
-
 
 
   return (
@@ -218,7 +233,7 @@ const ScheduleShipment = () => {
                               {filteredCountry?.map((country, index) => (
                                 <SelectItem
                                   key={index}
-                                  value={country?.name}
+                                  value={country?.iso2}
                                   className="text-[18px]"
                                 >
                                   {country?.name}
@@ -465,7 +480,7 @@ const ScheduleShipment = () => {
                               {filteredCountry?.map((country, index) => (
                                 <SelectItem
                                   key={index}
-                                  value={country?.name}
+                                  value={country?.iso2}
                                   className="text-[18px]"
                                 >
                                   {country?.name}
@@ -476,9 +491,9 @@ const ScheduleShipment = () => {
                         )}
                       />
                     </div>
-                    {errors.originCountry && (
+                    {errors.destinationCountry && (
                       <p className="error-message">
-                        {errors.originCountry.message}
+                        {errors.destinationCountry.message}
                       </p>
                     )}
                   </div>
@@ -528,18 +543,18 @@ const ScheduleShipment = () => {
                   <div className="shipment-input-box mt-5">
                     <div>
                       <label
-                        htmlFor="destinationAddresStreet"
+                        htmlFor="destinationStreetAddress"
                         className="shipment-label"
                       >
                         Address <span>*</span>
                       </label>
                       <input
                         type="text"
-                        name="destinationAddresStreet"
-                        id="destinationAddresStreet"
+                        name="destinationStreetAddress"
+                        id="destinationStreetAddress"
                         placeholder="Street Address"
                         className="shipment-input"
-                        {...register("destinationAddresStreet", {
+                        {...register("destinationStreetAddress", {
                           required: "Please enter a street address",
                         })}
                       />
@@ -555,9 +570,9 @@ const ScheduleShipment = () => {
                         })}
                       />
                     </div>
-                    {errors.destinationAddresStreet && (
+                    {errors.destinationStreetAddress && (
                       <p className="error-message">
-                        {errors.destinationAddresStreet.message}
+                        {errors.destinationStreetAddress.message}
                       </p>
                     )}
                     {errors.destinationAddresApartment && (
