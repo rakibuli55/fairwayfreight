@@ -1,14 +1,28 @@
-
-
-const QuoteCard = ({item}) => {
+const QuoteCard = ({ rate }) => {
   return (
-    <div className="flex items-center gap-3">
-      <img className="w-[70px] h-[70px] object-cover rounded-full" src={item?.provider_image_200} alt="" />
-      <div>
-        <h4 className="text-[20px] font-semibold text-heading mb-2">{item?.provider}</h4>
-        <p className="text-sm font-semibold text-heading">${item?.amount} each way</p>
-        <p>{item?.estimated_days}</p>
+    <div className="py-3 px-4 border rounded-[8px] relative">
+      <div className="flex items-center gap-3">
+        <img
+          className="w-[50px] h-[50px] object-cover rounded-full"
+          src={rate?.provider_image_200}
+          alt=""
+        />
+        <div>
+          <h4 className="text-[20px] font-semibold text-heading mb-1">
+            {rate?.provider}
+          </h4>
+          <p className="text-sm font-semibold text-heading">
+            ${rate?.amount} each way
+          </p>
+          <p>{rate?.estimated_days} business day</p>
+        </div>
+        {rate?.attributes && rate?.attributes.length > 0 && (
+          <p className="absolute top-2 right-2 text-[10px] bg-primaryGreen text-white py-[2px] px-2 rounded-[3px]">
+            {rate?.attributes?.join(",")}
+          </p>
+        )}
       </div>
+      {rate?.duration_terms && <p className="mt-3">{rate.duration_terms}</p>}
     </div>
   );
 };

@@ -13,6 +13,7 @@ import { api } from "../../api/index";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import PrimaryButton from "../common/PrimaryButton";
 import GetQuoteDialouge from "./GetQuoteDialouge";
+import puffLoader from "../../assets/icons/ripples.svg"
 
 const HeroSearchBar = () => {
   const axiosSecure = useAxiosSecure();
@@ -25,6 +26,8 @@ const HeroSearchBar = () => {
   } = useForm();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isFromLoading, setIsFromLoading] = useState(false);
+  const [isToLoading, setIsToLoading] = useState(false);
   const [isDialougeOpen, setIsDialougeOpen] = useState(false);
   const [quoteData, setQuoteData] = useState(null);
   const [error, setError] = useState(null);
@@ -43,7 +46,8 @@ const HeroSearchBar = () => {
     },
   });
   // fetchSuggestions
-  const fetchSuggestions = async (term, setSuggestions) => {
+  const fetchSuggestions = async (term, setSuggestions, setLoading) => {
+    setLoading(true)
     if (term.length > 2) {
       try {
         const response = await api.get(
@@ -52,6 +56,8 @@ const HeroSearchBar = () => {
         setSuggestions(response?.data);
       } catch (error) {
         console.log(error);
+      }finally{
+        setLoading(false)
       }
     } else {
       setFromSuggestions([]);
@@ -61,7 +67,7 @@ const HeroSearchBar = () => {
   useEffect(() => {
     if (fromValue.trim().length > 2 && selectedFromValue === null) {
       const debounceTimer = setTimeout(() => {
-        fetchSuggestions(fromValue, setFromSuggestions);
+        fetchSuggestions(fromValue, setFromSuggestions, setIsFromLoading);
       }, 1000);
 
       return () => clearTimeout(debounceTimer);
@@ -73,65 +79,59 @@ const HeroSearchBar = () => {
   useEffect(() => {
     if (toValue.trim().length > 2 && selectedToValue === null) {
       const debounceTimer = setTimeout(() => {
-        fetchSuggestions(toValue, setToSuggestions);
+        fetchSuggestions(toValue, setToSuggestions, setIsToLoading);
       }, 1000);
 
       return () => clearTimeout(debounceTimer);
     } else {
-      setFromSuggestions([]);
+      setToSuggestions([]);
     }
   }, [toValue, selectedToValue]);
+  useEffect(() => {
+    if(isDialougeOpen === 'false'){
+      setQuoteData(null)
+    }
+  }, [isDialougeOpen])
   // onSubmit
   const onSubmit = async (data) => {
     setIsDialougeOpen(true);
     const bagTypeObj = bagSizeData.filter(
       (bag) => bag.bag_size === data.bagSize
     );
-    
+
     if (bagTypeObj) {
       setIsLoading(true);
-      if(selectedFromValue)
 
-        const getAddressData = (selectedValue) => {
-          if (selectedValue?.address) {
-            return {
-              street1: selectedValue?.address?.address_1 || '',
-              city: selectedValue?.address?.city || '',
-              state: selectedValue?.address?.state || '',
-              zip: selectedValue?.address?.zip || '',
-              country: selectedValue?.address?.country || '',
-              place_id: selectedValue?.address?.place_id || ''
-            };
-          } else {
-            return {
-              street1: selectedValue?.formatted_address || '',
-              city: selectedValue?.address?.city || '',
-              state: selectedValue?.address?.state || '',
-              zip: selectedValue?.address?.zip || '',
-              country: selectedValue?.address?.country || '',
-              place_id: selectedValue?.place_id || ''
-            };
-          }
-        };}
+      const getAddressData = (selectedValue) => {
+        if (selectedValue?.address) {
+          return {
+            street1: selectedValue?.address?.address_1 || "",
+            city: selectedValue?.address?.city || "",
+            state: selectedValue?.address?.state || "",
+            zip: selectedValue?.address?.zip || "",
+            country: selectedValue?.address?.country || "",
+            place_id: selectedValue?.address?.place_id || "",
+            formated_address:selectedValue?.formatted_address.replace(/<br\s*\/?>/gi, ' ') || "",
+          };
+        } else {
+          return {
+            street1: selectedValue?.formatted_address || "",
+            city: selectedValue?.city || "",
+            state: selectedValue?.state || "",
+            zip: selectedValue?.zip || "",
+            country: selectedValue?.structured_formatting?.secondary_text
+              ?.split(", ")
+              .pop(),
+            place_id: selectedValue?.place_id || "",
+            formated_address:selectedValue?.formatted_address.replace(/<br\s*\/?>/gi, ' ') || "",
+          };
+        }
+      };
 
       try {
         const response = await axiosSecure.post("/get-quote", {
-          address_from: {
-            street1: selectedFromValue?.address?.address_1 || '',
-            city: selectedFromValue?.address?.city || '',
-            state: selectedFromValue?.address?.state || '',
-            zip: selectedFromValue?.address?.zip || '',
-            country: selectedFromValue?.address?.country || '',
-            place_id:selectedFromValue?.address?.place_id || ''
-          },
-          address_to: {
-            street1: selectedToValue?.address?.address_1 || '',
-            city: selectedToValue?.address?.city || '',
-            state: selectedToValue?.address?.state || '',
-            zip: selectedToValue?.address?.zip || '',
-            country: selectedToValue?.address?.country || '',
-            place_id:selectedToValue?.address?.place_id || ''
-          },
+          address_from: getAddressData(selectedFromValue),
+          address_to: getAddressData(selectedToValue),
           bag_type: {
             mass_unit: bagTypeObj[0].mass_unit,
             weight: bagTypeObj[0].weight,
@@ -144,15 +144,19 @@ const HeroSearchBar = () => {
         console.log(response);
         if (response.status === 200) {
           setQuoteData(response.data);
+          localStorage.setItem('shipmentData', JSON.stringify(response.data))
+          console.log(response.data);
         }
       } catch (error) {
         // toast.error(error.response.data.message);
         console.log(error);
+        setQuoteData(null)
       } finally {
         setIsLoading(false);
       }
     }
   };
+  
 
   return (
     <>
@@ -187,13 +191,14 @@ const HeroSearchBar = () => {
                   key={index}
                   className="flex items-start gap-2 border-b py-2 px-4 hover:bg-primaryGreen duration-200 ease-in-out cursor-pointer hover:text-white"
                   onClick={() => {
-                    setFromValue(suggestion?.formatted_address);
-                    setValue("from", suggestion?.formatted_address);
+                    const cleanedValue = suggestion?.formatted_address.replace(/<br\s*\/?>/gi, '');
+                    setFromValue(cleanedValue);
+                    setValue("from", cleanedValue);
                     setFromSuggestions([]);
                     setSelectedFromValue(suggestion);
                   }}
                 >
-                  <img className="w-[25px]" src={suggestion?.icon_url} alt="" />
+                  <img className="w-[25px]" src={suggestion?.address ? suggestion?.icon_url : suggestion?.icon_url} alt="" />
                   <p
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(suggestion?.formatted_address),
@@ -203,6 +208,11 @@ const HeroSearchBar = () => {
               ))}
             </ul>
           )}
+          {
+            isFromLoading && (
+              <img className="absolute top-7 right-0 w-6 h-6" src={puffLoader} alt="" />
+            )
+          }
         </div>
         <div className="searchbar-column relative">
           <label htmlFor="to" className="search-label">
@@ -229,8 +239,9 @@ const HeroSearchBar = () => {
                   key={index}
                   className="flex items-start gap-2 border-b py-2 px-4 hover:bg-primaryGreen duration-200 ease-in-out cursor-pointer hover:text-white"
                   onClick={() => {
-                    setToValue(suggestion?.formatted_address);
-                    setValue("to", suggestion?.formatted_address);
+                    const cleanedValue = suggestion?.formatted_address.replace(/<br\s*\/?>/gi, '');
+                    setToValue(cleanedValue);
+                    setValue("to", cleanedValue);
                     setToSuggestions([]);
                     setSelectedToValue(suggestion);
                   }}
@@ -245,6 +256,11 @@ const HeroSearchBar = () => {
               ))}
             </ul>
           )}
+          {
+            isToLoading && (
+              <img className="absolute top-7 right-0 w-6 h-6" src={puffLoader} alt="" />
+            )
+          }
         </div>
         <div className="searchbar-column last relative">
           <label htmlFor="from" className="search-label">

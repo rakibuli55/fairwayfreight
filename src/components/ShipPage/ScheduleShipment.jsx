@@ -1,3 +1,4 @@
+import { api } from "@/api";
 import {
   Select,
   SelectContent,
@@ -5,7 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -19,16 +21,22 @@ import TitleV2 from "../common/TitleV2";
 import InfoIndIcator from "./InfoIndIcator";
 import QuantityButton from "./QuantityButton";
 import ShipTab from "./ShipTab";
+import { useLocation } from "react-router-dom";
 
 const ScheduleShipment = () => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm({
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const [allCountries, setAllCountries] = useState(null)
+
+  const addressFrom = queryParams.get("address_from");
+  const addressTo = queryParams.get("address_to");
+
+  // Parse the JSON string back into an object
+  const addressFromObj = addressFrom ? JSON.parse(decodeURIComponent(addressFrom)) : null;
+  const addressToObj = addressTo ? JSON.parse(decodeURIComponent(addressTo)) : null;
+
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm({
+    // Set initial empty values first
     defaultValues: {
       golfBags: [
         { id: 1, size: "", packaging: "", insurance: "", otherInfo: "" },
@@ -36,14 +44,21 @@ const ScheduleShipment = () => {
       luggageBags: [
         { id: 1, size: "", packaging: "", insurance: "", otherInfo: "" },
       ],
-    },
+      originCountry:'United States',
+      originStreetAddress:addressFromObj?.formated_address || '',
+    }
   });
+
+  console.log(addressFromObj);
+
   const [origin, setOrigin] = useState("home");
   const [destination, setDestination] = useState("home");
   const [golfQuantity, setGolfQuantity] = useState(1);
   const [luggageQuantity, setLuggageQuantity] = useState(1);
   const [date, setDate] = useState(new Date());
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
+  const [originStates, setOriginStates] = useState([]);
+  const [destinationStates, setDestinationStates] = useState([]);
   const selectedDate = watch("date");
   const {
     fields: golfBagsFields,
@@ -61,7 +76,7 @@ const ScheduleShipment = () => {
     control,
     name: "luggageBags",
   });
-
+  // increaseQuantity
   const increaseQuantity = (event, type) => {
     event.preventDefault();
     if (type === "golf") {
@@ -84,7 +99,7 @@ const ScheduleShipment = () => {
       });
     }
   };
-
+  // decreaseQuantity
   const decreaseQuantity = (event, type) => {
     event.preventDefault();
     if (type === "golf") {
@@ -99,15 +114,59 @@ const ScheduleShipment = () => {
       }
     }
   };
-
+  // formatedDate
   const formatedDate = (selectedDate) => {
     return selectedDate.toLocaleDateString();
   };
+  // fetch all country
+  const { data: allCountry, isLoading: countryDataLoading } = useQuery({
+    queryKey: ["country-data"],
+    queryFn: async () => {
+      const response = await api.get(
+        "https://countriesnow.space/api/v0.1/countries/states"
+      );
+      setAllCountries(response.data.data)
+      return response.data.data;
+    },
+  });
 
-  // onsSubmit
+  const filteredCountry = allCountry?.filter((country, index, self) => index === self.findIndex((t) => t.name === country.name));
+
+  // fetchStates
+  const fetchStates = async (country, setStates) => {
+    if (!country) return;
+    const response = await api.post(
+      "https://countriesnow.space/api/v0.1/countries/states",
+      {
+        country: country,
+      }
+    );
+    if (response.status === 200) {
+      setStates(response.data.data.states);
+    }
+  };
+  // originCountry
+  const originCountry = watch("originCountry");
+  useEffect(() => {
+    if (originCountry) {
+      fetchStates(originCountry, setOriginStates);
+    }
+  }, [originCountry]);
+  const destinationCountry = watch("destinationCountry");
+  useEffect(() => {
+    if (destinationCountry) {
+      fetchStates(destinationCountry, setDestinationStates);
+    }
+  }, [destinationCountry]);
+
+  // onSubmit
   const onSubmit = (data) => {
     console.log(data);
   };
+
+
+
+
   return (
     <section className="pt-[225px] pb-[10px]">
       <Container>
@@ -156,24 +215,15 @@ const ScheduleShipment = () => {
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem
-                                value="united_states"
-                                className="text-[18px]"
-                              >
-                                United States
-                              </SelectItem>
-                              <SelectItem
-                                value="canada"
-                                className="text-[18px]"
-                              >
-                                Canada
-                              </SelectItem>
-                              <SelectItem
-                                value="australia"
-                                className="text-[18px]"
-                              >
-                                Australia
-                              </SelectItem>
+                              {filteredCountry?.map((country, index) => (
+                                <SelectItem
+                                  key={index}
+                                  value={country?.name}
+                                  className="text-[18px]"
+                                >
+                                  {country?.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         )}
@@ -330,24 +380,15 @@ const ScheduleShipment = () => {
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem
-                                  value="united_states"
-                                  className="text-[18px]"
-                                >
-                                  United States
-                                </SelectItem>
-                                <SelectItem
-                                  value="canada"
-                                  className="text-[18px]"
-                                >
-                                  Canada
-                                </SelectItem>
-                                <SelectItem
-                                  value="australia"
-                                  className="text-[18px]"
-                                >
-                                  Australia
-                                </SelectItem>
+                                {originStates?.map((state, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={state?.name}
+                                    className="text-[18px]"
+                                  >
+                                    {state?.name}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -383,15 +424,6 @@ const ScheduleShipment = () => {
                       </p>
                     )}
                   </div>
-                  {/* <div className="flex items-center gap-2 mt-12">
-                    <input type="checkbox" id="defaultOriginAddress" />
-                    <label
-                      htmlFor="defaultOriginAddress"
-                      className="cursor-pointer mt-[2px]"
-                    >
-                      Make this my default origin address.
-                    </label>
-                  </div> */}
                 </div>
               </div>
               {/* Destination  */}
@@ -430,24 +462,15 @@ const ScheduleShipment = () => {
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem
-                                value="united_states"
-                                className="text-[18px]"
-                              >
-                                United States
-                              </SelectItem>
-                              <SelectItem
-                                value="canada"
-                                className="text-[18px]"
-                              >
-                                Canada
-                              </SelectItem>
-                              <SelectItem
-                                value="australia"
-                                className="text-[18px]"
-                              >
-                                Australia
-                              </SelectItem>
+                              {filteredCountry?.map((country, index) => (
+                                <SelectItem
+                                  key={index}
+                                  value={country?.name}
+                                  className="text-[18px]"
+                                >
+                                  {country?.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         )}
@@ -613,24 +636,15 @@ const ScheduleShipment = () => {
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem
-                                  value="united_states"
-                                  className="text-[18px]"
-                                >
-                                  United States
-                                </SelectItem>
-                                <SelectItem
-                                  value="canada"
-                                  className="text-[18px]"
-                                >
-                                  Canada
-                                </SelectItem>
-                                <SelectItem
-                                  value="australia"
-                                  className="text-[18px]"
-                                >
-                                  Australia
-                                </SelectItem>
+                                {destinationStates?.map((state, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={state?.name}
+                                    className="text-[18px]"
+                                  >
+                                    {state?.name}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -1118,8 +1132,13 @@ const ScheduleShipment = () => {
                       <SelectValue placeholder="Select pickup location" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="myLocation !text-[18px]">Pickup from my location <span className="font-bold">+$4.99</span></SelectItem>
-                      <SelectItem value="localCarrier !text-[18px]">Drop off at local carrier store</SelectItem>
+                      <SelectItem value="myLocation !text-[18px]">
+                        Pickup from my location{" "}
+                        <span className="font-bold">+$4.99</span>
+                      </SelectItem>
+                      <SelectItem value="localCarrier !text-[18px]">
+                        Drop off at local carrier store
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
