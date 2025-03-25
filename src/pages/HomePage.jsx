@@ -15,16 +15,16 @@ const HomePage = () => {
     return <Preloader />;
   }
   return (
-    <>
+    <div className="overflow-x-hidden">
       <HeroSection data={homePagedata?.hero_section} />
       <ReviewPartnerSection reviewData={homePagedata?.review_section} />
-      <div className="bg-sectionLight py-[120px] custom-2xl:py-[100px] custom-xl:py-[100px] custom-lg:py-[100px]">
+      <div className="bg-sectionLight py-[120px] custom-2xl:py-[100px] custom-xl:py-[100px] custom-lg:py-[100px] custom-md:py-20 custom-sm:!py-[60px] custom-xs:!py-[60px]">
         <HowItWorks worksData={homePagedata?.working_process} />
       </div>
       <OurServicesSection servicesData={homePagedata?.services} />
       <ReferSection referData={homePagedata?.refer_section} />
       <NewsLatterSection newsLatterData={homePagedata?.subscription_section} />
-    </>
+    </div>
   );
 };
 

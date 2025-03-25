@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 const OurServicesSection = ({servicesData}) => {
   return (
-    <section className="py-[120px] custom-2xl:py-[100px] custom-xl:py-[100px] custom-lg:py-[100px]">
+    <section className="py-[120px] custom-2xl:py-[100px] custom-xl:py-[100px] custom-lg:py-[100px] max-md:py-20 custom-sm:!py-[60px] custom-xs:!py-[60px]">
       <Container>
         <div>
           {/* title  */}
@@ -21,14 +21,14 @@ const OurServicesSection = ({servicesData}) => {
           </div>
           <div className="service-cards-wrapper">
             {servicesData?.map((item) => (
-              <div key={item?.id} className="mt-[64px] card-inner">
+              <div key={item?.id} className="mt-[64px] max-md:mt-10 card-inner">
                 <ServiceCard item={item} />
               </div>
             ))}
           </div>
           {/* ship button  */}
           <Link to={'/'}>
-            <PrimaryButton text="Ship now" className="py-4 px-[68px] bg-primaryGreen border border-primaryGreen rounded-[40px] text-white duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen font-semibold mt-[64px] w-fit mx-auto hover:scale-[1.05]" />
+            <PrimaryButton text="Ship now" className="py-4 px-[68px] bg-primaryGreen border border-primaryGreen rounded-[40px] text-white duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen font-semibold mt-[64px] max-md:mt-10 w-fit mx-auto hover:scale-[1.05] max-md:py-3 max-md:px-7" />
           </Link>
         </div>
       </Container>

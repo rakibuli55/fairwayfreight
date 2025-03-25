@@ -45,12 +45,12 @@ const Navbar = () => {
     >
       <Container>
         <div
-          className={`pb-5 border-b ${
+          className={`pb-5 custom-xs:pb-2 border-b ${
             location.pathname === "/" ? "border-[#F6F6F6]" : "border-[#4d4d4d]"
           } flex items-center justify-between duration-200 ease-in-out ${
             scrolled
-              ? "pt-5 border-none"
-              : "pt-10 custom-2xl:pt-7 custom-lg:pt-6 max-md:pt-5"
+              ? "pt-5 custom-xs:!pt-3 border-none"
+              : "pt-10 custom-2xl:pt-7 custom-lg:pt-6 max-md:pt-5 custom-xs:!pt-3"
           }`}
         >
           <Link to={"/"}>

@@ -157,7 +157,7 @@ const HeroSearchBar = () => {
   return (
     <>
       <form
-        className="px-[85px] extra-large:px-[60px] custom-2xl:px-10 custom-xl:px-10 py-9 custom-2xl:py-7 custom-xl:py-7 custom-lg:py-6 custom-lg:px-8 bg-white shadow-[0px_5px_16px_0px_rgba(0,0,0,0.05)] w-full rounded-[30px] flex items-center justify-between hero-searchbar custom-lg:rounded-[20px] max-md:p-6 max-md:rounded-[12px] max-md:flex-col"
+        className="px-[85px] extra-large:px-[60px] custom-2xl:px-10 custom-xl:px-10 py-9 custom-2xl:py-7 custom-xl:py-7 custom-lg:py-6 custom-lg:px-8 bg-white shadow-[0px_5px_16px_0px_rgba(0,0,0,0.05)] w-full rounded-[30px] flex items-center justify-between hero-searchbar custom-lg:rounded-[20px] max-md:p-6 max-md:rounded-[12px] max-md:flex-col custom-xs:!p-5"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="searchbar-column relative">
@@ -181,7 +181,7 @@ const HeroSearchBar = () => {
             }}
           />
           {fromSuggestions?.length > 0 && (
-            <ul className="suggestions-dropdown max-h-[300px] overflow-y-auto absolute py-5 right-0 top-[76px] bg-white z-[4] w-[270px] border">
+            <ul className="suggestions-dropdown max-h-[300px] overflow-y-auto absolute py-5 right-0 top-[76px] max-md:left-0 bg-white z-[4] w-[270px] border custom-sm:w-full custom-xs:w-full custom-sm:max-h-[250px] custom-xs:max-h-[250px]">
               {fromSuggestions?.map((suggestion, index) => (
                 <li
                   key={index}
@@ -229,7 +229,7 @@ const HeroSearchBar = () => {
             }}
           />
           {toSuggestions?.length > 0 && (
-            <ul className="suggestions-dropdown max-h-[300px] overflow-y-auto absolute py-5 left-0 top-[76px] bg-white z-[4] w-[270px] border">
+            <ul className="suggestions-dropdown max-h-[300px] overflow-y-auto absolute py-5 left-0 top-[76px] bg-white z-[4] w-[270px] custom-sm:w-full custom-xs:w-full custom-sm:max-h-[250px] custom-xs:max-h-[250px] border">
               {toSuggestions?.map((suggestion, index) => (
                 <li
                   key={index}
@@ -271,7 +271,7 @@ const HeroSearchBar = () => {
             render={({ field }) => (
               <Select {...field} onValueChange={field.onChange}>
                 <SelectTrigger
-                  className={`w-full border-t-0 border-l-0 border-r-0 !rounded-[0] shadow-none border-b border-[rgba(0,0,0,0.0.1)] text-[20px] custom-lg:text-[18px] focus:ring-0 pl-0 ${
+                  className={`w-full border-t-0 border-l-0 border-r-0 !rounded-[0] shadow-none border-b border-[rgba(0,0,0,0.0.1)] text-[20px] custom-xs:text-[17px] text-paragraph custom-lg:text-[18px] focus:ring-0 pl-0 ${
                     errors.bagSize ? "border-red-500" : ""
                   }`}
                 >
@@ -296,7 +296,7 @@ const HeroSearchBar = () => {
           <button type="submit">
             <PrimaryButton
               text="Get Quote"
-              className="text-base font-bold text-white bg-primaryGreen rounded-[40px] py-4 px-6 custom-lg:py-3 custom-lg:px-4 hover:bg-white hover:text-primaryGreen border border-primaryGreen"
+              className="text-base font-bold text-white bg-primaryGreen rounded-[40px] py-4 px-6 custom-lg:py-3 custom-lg:px-4 hover:bg-white hover:text-primaryGreen border border-primaryGreen custom-sm:py-3 custom-sm:px-5 custom-xs:py-3 custom-xs:px-5"
             />
           </button>
         </div>

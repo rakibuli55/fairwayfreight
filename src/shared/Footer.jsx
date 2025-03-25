@@ -19,9 +19,9 @@ const Footer = () => {
   });
 
   return (
-    <footer className="pt-[60px]">
+    <footer className="pt-[60px] custom-sm:pt-10 custom-xs:pt-10">
       <Container>
-        <div className="flex items-start justify-between pb-[22px] border-b border-[#B3BAC5]">
+        <div className="flex flex-wrap items-start justify-between pb-[22px] border-b border-[#B3BAC5]">
           {/* footer box  */}
           <div className="mt-5">
             <Link to={"/"}>
@@ -33,13 +33,13 @@ const Footer = () => {
                 alt="footerLogo"
               />
             </Link>
-            <p className="w-[500px] text-[20px] text-paragraph leading-[34px] mt-6">
+            <p className="w-[500px] custom-sm:w-[90%] custom-xs:w-[100%] custom-sm:text-[17px] custom-sm:leading-normal custom-xs:text-[17px] custom-xs:leading-normal text-[20px] text-paragraph leading-[34px] mt-6 custom-xs:mt-4">
               {siteSettingsData?.description}
             </p>
           </div>
           {/* footer box  */}
           <div className="mt-5">
-            <h4 className="text-[24px] font-bold text-heading leading-normal">
+            <h4 className="text-[24px] custom-xs:text-[22px] custom-sm:text-[22px] font-bold text-heading leading-normal">
               Quick Links
             </h4>
             <ul>
@@ -62,15 +62,15 @@ const Footer = () => {
           </div>
           {/* footer box  */}
           <div className="mt-5">
-            <h4 className="text-[24px] font-bold text-heading leading-normal">
+            <h4 className="text-[24px] custom-xs:text-[22px] custom-sm:text-[22px] font-bold text-heading leading-normal">
               Contact Us
             </h4>
-            <p className="mt-6 text-[18px] w-[270px] text-paragraph">
+            <p className="mt-6 custom-sm:mt-2 custom-xs:mt-2 text-[18px] w-[270px] text-paragraph">
               {siteSettingsData?.address}
             </p>
           </div>
         </div>
-        <div className="flex items-center justify-between py-6">
+        <div className="flex items-center justify-between py-6 custom-xs:flex-col custom-xs:gap-3 custom-sm:flex-col custom-sm:gap-3">
           <p className="text-paragraph">{siteSettingsData?.copyright_text}</p>
           <ul className="flex items-center gap-3">
             {socialData?.map((item) => (
