@@ -7,21 +7,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { FaUserAlt } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
+import { useLocation } from "react-router-dom";
 import golfBag from "../../assets/icons/golf-bags.svg";
 import luggageBag from "../../assets/icons/luggage-bag.svg";
 import Container from "../../container/Container";
+import { AuthContext } from "../../context/index";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 import PrimaryButton from "../common/PrimaryButton";
 import TitleV2 from "../common/TitleV2";
 import InfoIndIcator from "./InfoIndIcator";
 import QuantityButton from "./QuantityButton";
 import ShipTab from "./ShipTab";
-import { useLocation } from "react-router-dom";
 
 const ScheduleShipment = () => {
   const location = useLocation();
@@ -31,41 +33,54 @@ const ScheduleShipment = () => {
   const addressTo = queryParams.get("address_to");
 
   // Parse the JSON string back into an object
-  const addressFromObj = addressFrom ? JSON.parse(decodeURIComponent(addressFrom)) : null;
-  const addressToObj = addressTo ? JSON.parse(decodeURIComponent(addressTo)) : null;
+  const addressFromObj = addressFrom
+    ? JSON.parse(decodeURIComponent(addressFrom))
+    : null;
+  const addressToObj = addressTo
+    ? JSON.parse(decodeURIComponent(addressTo))
+    : null;
 
-  console.log(addressToObj)
-
-  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm({
     // Set initial empty values first
     defaultValues: {
       golfBags: [
         { id: 1, size: "", packaging: "", insurance: "", otherInfo: "" },
       ],
-      luggageBags: [
-        { id: 1, size: "", packaging: "", insurance: "", otherInfo: "" },
-      ],
-      originCountry: addressFromObj?.country || 'US',
-      originStreetAddress:addressFromObj?.formated_address || '',
-      originAddresApartment:addressFromObj?.street1 || '',
-      originZip:addressFromObj?.zip || '',
-      originCity: addressFromObj?.city || '',
-      destinationCountry: addressToObj?.country || 'US',
-      destinationStreetAddress:addressToObj?.formated_address || '',
-      destinationAddresApartment:addressToObj?.street1 || '',
-      destinationZip:addressToObj?.zip || '',
-      destinationCity: addressToObj?.city || ''
-    }
+      luggageBags: [],
+      originCountry: addressFromObj?.country || "US",
+      originStreetAddress: addressFromObj?.formated_address || "",
+      originAddresApartment: addressFromObj?.street1 || "",
+      originZip: addressFromObj?.zip || "",
+      originCity: addressFromObj?.city || "",
+      destinationCountry: addressToObj?.country || "US",
+      destinationStreetAddress: addressToObj?.formated_address || "",
+      destinationAddresApartment: addressToObj?.street1 || "",
+      destinationZip: addressToObj?.zip || "",
+      destinationCity: addressToObj?.city || "",
+    },
+    mode: "onChange",
   });
 
-  const [origin, setOrigin] = useState("home");
-  const [destination, setDestination] = useState("home");
+  const formValues = watch();
+
+  const [origin, setOrigin] = useState(addressFromObj.type.toLowerCase() || 'home');
+  const [destination, setDestination] = useState(addressToObj.type.toLowerCase() || 'home');
   const [golfQuantity, setGolfQuantity] = useState(1);
-  const [luggageQuantity, setLuggageQuantity] = useState(1);
+  const [luggageQuantity, setLuggageQuantity] = useState(0);
   const [date, setDate] = useState(new Date());
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
   const [originStates, setOriginStates] = useState([]);
   const [destinationStates, setDestinationStates] = useState([]);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+  const { bagSizeData } = useContext(AuthContext);
+  const axiosSecure = useAxiosSecure();
   const selectedDate = watch("date");
   const {
     fields: golfBagsFields,
@@ -84,11 +99,13 @@ const ScheduleShipment = () => {
     name: "luggageBags",
   });
 
-  const [allCountries, setAllCountries] = useState(null)
+  const [allCountries, setAllCountries] = useState(null);
   const getCountryByShortName = (countryCode) => {
-    const matchedCountry = allCountries?.find((country) => country.iso2 === countryCode);
+    const matchedCountry = allCountries?.find(
+      (country) => country.iso2 === countryCode
+    );
     return matchedCountry?.name;
-  }
+  };
 
   // increaseQuantity
   const increaseQuantity = (event, type) => {
@@ -122,7 +139,7 @@ const ScheduleShipment = () => {
         golfBagsRemove(golfQuantity - 1);
       }
     } else if (type === "luggage") {
-      if (luggageQuantity > 1) {
+      if (luggageQuantity > 0) {
         setLuggageQuantity((prev) => prev - 1);
         luggageBagsRemove(luggageQuantity - 1);
       }
@@ -139,12 +156,15 @@ const ScheduleShipment = () => {
       const response = await api.get(
         "https://countriesnow.space/api/v0.1/countries/states"
       );
-      setAllCountries(response.data.data)
+      setAllCountries(response.data.data);
       return response.data.data;
     },
   });
 
-  const filteredCountry = allCountry?.filter((country, index, self) => index === self.findIndex((t) => t.name === country.name));
+  const filteredCountry = allCountry?.filter(
+    (country, index, self) =>
+      index === self.findIndex((t) => t.name === country.name)
+  );
 
   // fetchStates
   const fetchStates = async (country, setStates) => {
@@ -163,7 +183,7 @@ const ScheduleShipment = () => {
   const originCountry = watch("originCountry");
   useEffect(() => {
     if (originCountry) {
-      const fullCountry = getCountryByShortName(originCountry)
+      const fullCountry = getCountryByShortName(originCountry);
       fetchStates(fullCountry, setOriginStates);
     }
   }, [originCountry, allCountries]);
@@ -171,16 +191,90 @@ const ScheduleShipment = () => {
   const destinationCountry = watch("destinationCountry");
   useEffect(() => {
     if (destinationCountry) {
-      const fullCountry = getCountryByShortName(destinationCountry)
+      const fullCountry = getCountryByShortName(destinationCountry);
       fetchStates(fullCountry, setDestinationStates);
     }
   }, [destinationCountry, allCountries]);
 
   // onSubmit
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("submitted data", data);
+    setIsSubmitClicked(true);
   };
 
+  // console.log(formValues);
+
+  useEffect(() => {
+    if (isValid && !isSubmitClicked) {
+      const apiCall = async () => {
+        try {
+          const response = await axiosSecure.post("/shipment", {
+            "address_from": {
+              name: formValues.senderName,
+              company:formValues.originCompany,
+              street1: formValues.originAddresApartment,
+              city: formValues.originCity,
+              state: formValues.originState,
+              zip: formValues.originZip,
+              country: formValues.originCountry,
+              phone: formValues.originPhone,
+            },
+            "address_to": {
+              name: formValues.recipientName,
+              company:formValues.destinationCompany,
+              street1: formValues.destinationAddresApartment,
+              city: formValues.destinationCity,
+              state: formValues.destinationState,
+              zip: formValues.destinationZip,
+              country: formValues.destinationCountry,
+              phone: formValues.destinationZip,
+            },
+          
+          "parcels": [
+              {
+                  "mass_unit": "lb",
+                  "weight": "1",
+                  "distance_unit": "in",
+                  "height": "1",
+                  "length": "1",
+                  "width": "1",
+          
+                  "extra": {
+                      "insurance": {
+                          "amount": "5.5",
+                          "currency": "USD",
+                      }
+                  }
+              },
+              {
+              "mass_unit": "lb",
+              "weight": "1",
+              "distance_unit": "in",
+              "height": "1",
+              "length": "1",
+              "width": "1",
+          
+              "extra": {
+                  "insurance": {
+                      "amount": "1000",
+                      "currency": "USD",
+                  }
+              }
+          }
+          ],
+          
+          "shipment_date": "2021-03-22T12:00:00Z"
+          
+          
+          });
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      apiCall();
+    }
+  }, [isValid, formValues, isSubmitClicked]);
 
   return (
     <section className="pt-[225px] pb-[10px]">
@@ -423,7 +517,7 @@ const ScheduleShipment = () => {
                         Phone <span>*</span>
                       </label>
                       <input
-                        type="text"
+                        type="tel"
                         name="originPhone"
                         id="originPhone"
                         placeholder="Enter Your Phone Number"
@@ -682,7 +776,7 @@ const ScheduleShipment = () => {
                         Phone <span>*</span>
                       </label>
                       <input
-                        type="text"
+                        type="tel"
                         name="destinationPhone"
                         id="destinationPhone"
                         placeholder="Enter Your Phone Number"
@@ -763,7 +857,7 @@ const ScheduleShipment = () => {
                       Phone <span>*</span>
                     </label>
                     <input
-                      type="number"
+                      type="tel"
                       placeholder="Enter your phone"
                       name="senderPhone"
                       id="senderPhone"
@@ -798,7 +892,7 @@ const ScheduleShipment = () => {
                 </div>
                 <div>
                   {golfBagsFields.map((bag, index) => (
-                    <div key={bag.id} className="grid grid-cols-4 gap-6 pt-6">
+                    <div key={index} className="grid grid-cols-4 gap-6 pt-6">
                       {/* bag size  */}
                       <div>
                         <label htmlFor="#" className="shipment-label">
@@ -817,9 +911,14 @@ const ScheduleShipment = () => {
                                 {field.value || "Select Bag Size"}
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="small">Small</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="large">Large</SelectItem>
+                                {bagSizeData?.map((item, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={item?.bag_size}
+                                  >
+                                    {item?.bag_size}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -882,11 +981,26 @@ const ScheduleShipment = () => {
                                   {field.value || "Select insurance"}
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="2000">
-                                    $2,000 ($7.99)
+                                  <SelectItem value="1000">
+                                    $1,000 ($0.00)
+                                  </SelectItem>
+                                  <SelectItem value="1500">
+                                    $1,500 ($5.99)
+                                  </SelectItem>
+                                  <SelectItem value="2500">
+                                    $2,500 ($8.99)
+                                  </SelectItem>
+                                  <SelectItem value="3000">
+                                    $3,000 ($9.99)
+                                  </SelectItem>
+                                  <SelectItem value="3500">
+                                    $3,500 ($19.99)
                                   </SelectItem>
                                   <SelectItem value="5000">
-                                    $5,000 ($14.99)
+                                    $5,000 ($29.99)
+                                  </SelectItem>
+                                  <SelectItem value="7500">
+                                    $7,500 ($39.99)
                                   </SelectItem>
                                 </SelectContent>
                               </Select>
@@ -963,9 +1077,14 @@ const ScheduleShipment = () => {
                                 {field.value || "Select Bag Size"}
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="small">Small</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="large">Large</SelectItem>
+                                {bagSizeData?.map((item, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={item?.bag_size}
+                                  >
+                                    {item?.bag_size}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -1028,11 +1147,26 @@ const ScheduleShipment = () => {
                                   {field.value || "Select insurance"}
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="2000">
-                                    $2,000 ($7.99)
+                                  <SelectItem value="1000">
+                                    $1,000 ($0.00)
+                                  </SelectItem>
+                                  <SelectItem value="1500">
+                                    $1,500 ($5.99)
+                                  </SelectItem>
+                                  <SelectItem value="2500">
+                                    $2,500 ($8.99)
+                                  </SelectItem>
+                                  <SelectItem value="3000">
+                                    $3,000 ($9.99)
+                                  </SelectItem>
+                                  <SelectItem value="3500">
+                                    $3,500 ($19.99)
                                   </SelectItem>
                                   <SelectItem value="5000">
-                                    $5,000 ($14.99)
+                                    $5,000 ($29.99)
+                                  </SelectItem>
+                                  <SelectItem value="7500">
+                                    $7,500 ($39.99)
                                   </SelectItem>
                                 </SelectContent>
                               </Select>
@@ -1142,20 +1276,30 @@ const ScheduleShipment = () => {
                   <label htmlFor="handlingMethod" className="shipment-label">
                     Handling method <span>*</span>
                   </label>
-                  <Select>
-                    <SelectTrigger className="shipment-select !h-[77px]">
-                      <SelectValue placeholder="Select pickup location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="myLocation !text-[18px]">
-                        Pickup from my location{" "}
-                        <span className="font-bold">+$4.99</span>
-                      </SelectItem>
-                      <SelectItem value="localCarrier !text-[18px]">
-                        Drop off at local carrier store
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="handlingMethod"
+                    id="handlingMethod"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger className="shipment-select !h-[77px]">
+                          <SelectValue placeholder="Select pickup location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="myLocation !text-[18px]">
+                            Pickup from my location{" "}
+                            <span className="font-bold">+$4.99</span>
+                          </SelectItem>
+                          <SelectItem value="localCarrier !text-[18px]">
+                            Drop off at local carrier store
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
               </div>
             </div>
@@ -1164,7 +1308,11 @@ const ScheduleShipment = () => {
             <button type="submit">
               <PrimaryButton
                 text="Place order"
-                className="py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen"
+                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen ${
+                  isValid
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-50 pointer-events-none"
+                }`}
               />
             </button>
           </div>

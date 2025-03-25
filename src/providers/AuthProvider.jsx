@@ -4,6 +4,7 @@ import { AuthContext } from "../context/index";
 import useGetSiteSettings from "../hooks/useGetSiteSettings";
 import useGetUser from "../hooks/useGetUser";
 import useGetHomepageData from "../hooks/useGetHomepageData";
+import useGetBagSize from "../hooks/useGetBagSize";
 
 const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(
@@ -12,7 +13,8 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const { userData, userLoading } = useGetUser(authToken);
   const { siteSettingsData, siteSettingLoading } = useGetSiteSettings();
-  const {homePagedata, homeDataLoading} = useGetHomepageData()
+  const {homePagedata, homeDataLoading} = useGetHomepageData();
+  const {bagSizeData, bagSizeDataLoading} = useGetBagSize();
   const [favicon, setFavicon] = useState(null);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ authToken, setAuthToken, user, setUser, siteSettingsData, homePagedata, homeDataLoading }}
+      value={{ authToken, setAuthToken, user, setUser, siteSettingsData, homePagedata, homeDataLoading, bagSizeData }}
     >
       {children}
     </AuthContext.Provider>

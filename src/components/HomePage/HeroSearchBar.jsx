@@ -7,13 +7,14 @@ import {
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { api } from "../../api/index";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import PrimaryButton from "../common/PrimaryButton";
 import GetQuoteDialouge from "./GetQuoteDialouge";
 import puffLoader from "../../assets/icons/ripples.svg"
+import { AuthContext } from "../../context/index";
 
 const HeroSearchBar = () => {
   const axiosSecure = useAxiosSecure();
@@ -37,14 +38,7 @@ const HeroSearchBar = () => {
   const [toValue, setToValue] = useState("");
   const [toSuggestions, setToSuggestions] = useState([]);
   const [selectedToValue, setSelectedToValue] = useState(null);
-
-  const { data: bagSizeData, isLoading: bagSizeDataLoading } = useQuery({
-    queryKey: ["bag-size"],
-    queryFn: async () => {
-      const response = await axiosSecure.get("/bag-sizes");
-      return response?.data?.data;
-    },
-  });
+  const {bagSizeData} = useContext(AuthContext)
   // fetchSuggestions
   const fetchSuggestions = async (term, setSuggestions, setLoading) => {
     setLoading(true)
@@ -112,6 +106,7 @@ const HeroSearchBar = () => {
             country: selectedValue?.address?.country || "",
             place_id: selectedValue?.address?.place_id || "",
             formated_address:selectedValue?.formatted_address.replace(/<br\s*\/?>/gi, ' ') || "",
+            type:selectedValue?.type,
           };
         } else {
           return {
@@ -124,6 +119,7 @@ const HeroSearchBar = () => {
               .pop(),
             place_id: selectedValue?.place_id || "",
             formated_address:selectedValue?.formatted_address.replace(/<br\s*\/?>/gi, ' ') || "",
+            type:selectedValue?.type,
           };
         }
       };
@@ -141,16 +137,16 @@ const HeroSearchBar = () => {
             width: bagTypeObj[0].width,
           },
         });
-        console.log(response);
+        console.log('Quote data',response);
         if (response.status === 200) {
           setQuoteData(response.data);
+          setError(null);
           localStorage.setItem('shipmentData', JSON.stringify(response.data))
-          console.log(response.data);
         }
       } catch (error) {
-        // toast.error(error.response.data.message);
-        console.log(error);
-        setQuoteData(null)
+        setError(error.response.data.message)
+        setQuoteData(null);
+        console.log('quote error',error);
       } finally {
         setIsLoading(false);
       }
