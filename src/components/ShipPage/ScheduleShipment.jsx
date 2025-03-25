@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -70,8 +70,12 @@ const ScheduleShipment = () => {
 
   const formValues = watch();
 
-  const [origin, setOrigin] = useState(addressFromObj.type.toLowerCase() || 'home');
-  const [destination, setDestination] = useState(addressToObj.type.toLowerCase() || 'home');
+  const [origin, setOrigin] = useState(
+    addressFromObj.type.toLowerCase() || "home"
+  );
+  const [destination, setDestination] = useState(
+    addressToObj.type.toLowerCase() || "home"
+  );
   const [golfQuantity, setGolfQuantity] = useState(1);
   const [luggageQuantity, setLuggageQuantity] = useState(0);
   const [date, setDate] = useState(new Date());
@@ -203,15 +207,22 @@ const ScheduleShipment = () => {
   };
 
   // console.log(formValues);
+  const apiCallTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (isValid && !isSubmitClicked) {
-      const apiCall = async () => {
+      // Clear any existing timeout
+      if (apiCallTimeoutRef.current) {
+        clearTimeout(apiCallTimeoutRef.current);
+      }
+  
+      // Set a new timeout
+      apiCallTimeoutRef.current = setTimeout(async () => {
         try {
           const response = await axiosSecure.post("/shipment", {
-            "address_from": {
+            address_from: {
               name: formValues.senderName,
-              company:formValues.originCompany,
+              company: formValues.originCompany,
               street1: formValues.originAddresApartment,
               city: formValues.originCity,
               state: formValues.originState,
@@ -219,9 +230,9 @@ const ScheduleShipment = () => {
               country: formValues.originCountry,
               phone: formValues.originPhone,
             },
-            "address_to": {
+            address_to: {
               name: formValues.recipientName,
-              company:formValues.destinationCompany,
+              company: formValues.destinationCompany,
               street1: formValues.destinationAddresApartment,
               city: formValues.destinationCity,
               state: formValues.destinationState,
@@ -229,52 +240,52 @@ const ScheduleShipment = () => {
               country: formValues.destinationCountry,
               phone: formValues.destinationZip,
             },
-          
-          "parcels": [
+            parcels: [
               {
-                  "mass_unit": "lb",
-                  "weight": "1",
-                  "distance_unit": "in",
-                  "height": "1",
-                  "length": "1",
-                  "width": "1",
-          
-                  "extra": {
-                      "insurance": {
-                          "amount": "5.5",
-                          "currency": "USD",
-                      }
-                  }
+                mass_unit: "lb",
+                weight: "1",
+                distance_unit: "in",
+                height: "1",
+                length: "1",
+                width: "1",
+                extra: {
+                  insurance: {
+                    amount: "5.5",
+                    currency: "USD",
+                  },
+                },
               },
               {
-              "mass_unit": "lb",
-              "weight": "1",
-              "distance_unit": "in",
-              "height": "1",
-              "length": "1",
-              "width": "1",
-          
-              "extra": {
-                  "insurance": {
-                      "amount": "1000",
-                      "currency": "USD",
-                  }
-              }
-          }
-          ],
-          
-          "shipment_date": "2021-03-22T12:00:00Z"
-          
-          
+                mass_unit: "lb",
+                weight: "1",
+                distance_unit: "in",
+                height: "1",
+                length: "1",
+                width: "1",
+                extra: {
+                  insurance: {
+                    amount: "1000",
+                    currency: "USD",
+                  },
+                },
+              },
+            ],
+            shipment_date: "2021-03-22T12:00:00Z",
           });
           console.log(response);
         } catch (error) {
           console.log(error);
         }
+      }, 1000); // 1 second debounce time
+  
+      // Cleanup function
+      return () => {
+        if (apiCallTimeoutRef.current) {
+          clearTimeout(apiCallTimeoutRef.current);
+        }
       };
-      apiCall();
     }
-  }, [isValid, formValues, isSubmitClicked]);
+  }, [isValid, isSubmitClicked, formValues]);
 
   return (
     <section className="pt-[225px] pb-[10px]">
