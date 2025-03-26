@@ -6,16 +6,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useGetParcel from "@/hooks/useGetParcel";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { FaUserAlt } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
+import { MdErrorOutline } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import golfBag from "../../assets/icons/golf-bags.svg";
 import luggageBag from "../../assets/icons/luggage-bag.svg";
+import PaypalImage from "../../assets/icons/paypal.png";
+import loaderSvg from "../../assets/icons/preloader.svg";
+import StripeImage from "../../assets/icons/stripe.png";
 import Container from "../../container/Container";
 import { AuthContext } from "../../context/index";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -31,6 +36,7 @@ const ScheduleShipment = () => {
 
   const addressFrom = queryParams.get("address_from");
   const addressTo = queryParams.get("address_to");
+  const [date, setDate] = useState(new Date());
 
   // Parse the JSON string back into an object
   const addressFromObj = addressFrom
@@ -46,7 +52,7 @@ const ScheduleShipment = () => {
     control,
     watch,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm({
     // Set initial empty values first
     defaultValues: {
@@ -64,25 +70,23 @@ const ScheduleShipment = () => {
       destinationAddresApartment: addressToObj?.street1 || "",
       destinationZip: addressToObj?.zip || "",
       destinationCity: addressToObj?.city || "",
+      pickupDate: date,
     },
-    mode: "onChange",
   });
 
-  const formValues = watch();
-
   const [origin, setOrigin] = useState(
-    addressFromObj.type.toLowerCase() || "home"
+    addressFromObj?.type.toLowerCase() || "home"
   );
   const [destination, setDestination] = useState(
-    addressToObj.type.toLowerCase() || "home"
+    addressToObj?.type.toLowerCase() || "home"
   );
   const [golfQuantity, setGolfQuantity] = useState(1);
   const [luggageQuantity, setLuggageQuantity] = useState(0);
-  const [date, setDate] = useState(new Date());
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
   const [originStates, setOriginStates] = useState([]);
   const [destinationStates, setDestinationStates] = useState([]);
-  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+  const [parcelRateLoading, setParcelRateLoading] = useState(false);
+  const [parcelData, setParcelData] = useState(null);
   const { bagSizeData } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
   const selectedDate = watch("date");
@@ -151,7 +155,13 @@ const ScheduleShipment = () => {
   };
   // formatedDate
   const formatedDate = (selectedDate) => {
-    return selectedDate.toLocaleDateString();
+    return selectedDate
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      })
+      .replace(/\//g, "/");
   };
   // fetch all country
   const { data: allCountry, isLoading: countryDataLoading } = useQuery({
@@ -202,90 +212,80 @@ const ScheduleShipment = () => {
 
   // onSubmit
   const onSubmit = (data) => {
-    console.log("submitted data", data);
-    setIsSubmitClicked(true);
-  };
+    console.log(data);
+    const formValues = watch();
+    const { parcels } = useGetParcel(formValues, bagSizeData);
 
-  // console.log(formValues);
-  const apiCallTimeoutRef = useRef(null);
+    const selectedRate = parcelData?.rates?.find(
+      (rate) => rate.object_id === data.selectedRate
+    );
+    // access the selected rate's amount
+    const selectedAmount = selectedRate ? selectedRate.amount : null;
+    data.selectedRate = selectedAmount;
 
-  useEffect(() => {
-    if (isValid && !isSubmitClicked) {
-      // Clear any existing timeout
-      if (apiCallTimeoutRef.current) {
-        clearTimeout(apiCallTimeoutRef.current);
+    const fetchPercelRates = async () => {
+      setParcelRateLoading(true);
+      try {
+        const response = await axiosSecure.post("/shipment", {
+          address_from: {
+            name: formValues.senderName,
+            company: formValues.originCompany,
+            street1: formValues.originStreetAddress,
+            city: formValues.originCity,
+            state: formValues.originState,
+            zip: formValues.originZip,
+            country: formValues.originCountry,
+            phone: formValues.originPhone,
+          },
+          address_to: {
+            name: formValues.recipientName,
+            company: formValues.destinationCompany,
+            street1: formValues.destinationStreetAddress,
+            city: formValues.destinationCity,
+            state: formValues.destinationState,
+            zip: formValues.destinationZip,
+            country: formValues.destinationCountry,
+            phone: formValues.destinationZip,
+          },
+          parcels,
+          shipment_date: formValues.pickupDate,
+        });
+        if (response.status === 200) {
+          setParcelData(response.data);
+        }
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setParcelRateLoading(false);
       }
-  
-      // Set a new timeout
-      apiCallTimeoutRef.current = setTimeout(async () => {
-        try {
-          const response = await axiosSecure.post("/shipment", {
-            address_from: {
-              name: formValues.senderName,
-              company: formValues.originCompany,
-              street1: formValues.originAddresApartment,
-              city: formValues.originCity,
-              state: formValues.originState,
-              zip: formValues.originZip,
-              country: formValues.originCountry,
-              phone: formValues.originPhone,
-            },
-            address_to: {
-              name: formValues.recipientName,
-              company: formValues.destinationCompany,
-              street1: formValues.destinationAddresApartment,
-              city: formValues.destinationCity,
-              state: formValues.destinationState,
-              zip: formValues.destinationZip,
-              country: formValues.destinationCountry,
-              phone: formValues.destinationZip,
-            },
-            parcels: [
-              {
-                mass_unit: "lb",
-                weight: "1",
-                distance_unit: "in",
-                height: "1",
-                length: "1",
-                width: "1",
-                extra: {
-                  insurance: {
-                    amount: "5.5",
-                    currency: "USD",
-                  },
-                },
-              },
-              {
-                mass_unit: "lb",
-                weight: "1",
-                distance_unit: "in",
-                height: "1",
-                length: "1",
-                width: "1",
-                extra: {
-                  insurance: {
-                    amount: "1000",
-                    currency: "USD",
-                  },
-                },
-              },
-            ],
-            shipment_date: "2021-03-22T12:00:00Z",
-          });
-          console.log(response);
-        } catch (error) {
-          console.log(error);
-        }
-      }, 1000); // 1 second debounce time
-  
-      // Cleanup function
-      return () => {
-        if (apiCallTimeoutRef.current) {
-          clearTimeout(apiCallTimeoutRef.current);
-        }
-      };
+    };
+    if (!data.selectedRate && data.selectedRate === null) {
+      fetchPercelRates();
     }
-  }, [isValid, isSubmitClicked, formValues]);
+
+    // call stripe payment 
+    const stripePay = async () => {
+      try{
+        const response = await axiosSecure.post('/stripe/checkout', {
+          total:100,
+          rate_id:"a0ec84987e714135b6b19092e00dd0a8",
+          success_url:"https://pngtree.com/freepng/flat-style-payment-success-icon-with-check-mark-vector_12869531.html",
+          cancel_url:"https://pngtree.com/freepng/cancel-stamp-template-solid-color_7820002.html",
+        });
+        console.log(response);
+        if(response.status === 201){
+          window.open(response.data.data.payment_link, '_blank',);
+        }
+      }catch(error){
+        console.log(error);
+      }
+    }
+
+    if(data.paymentOption === 'stripe'){
+      stripePay()
+    }
+  };
 
   return (
     <section className="pt-[225px] pb-[10px]">
@@ -1221,6 +1221,72 @@ const ScheduleShipment = () => {
             </div>
             {/* portion three || trip category  */}
             <div className="shipment-form-layout mt-12">
+              {/* parcels rate if have  */}
+              <div>
+                {parcelRateLoading ? (
+                  <p>
+                    <img className="w-[80px]" src={loaderSvg} alt="" />
+                  </p>
+                ) : parcelData?.rates?.length > 0 ? (
+                  <div className="mb-10">
+                    <h3 className="text-[24px] font-semibold text-heading mb-5">
+                      Deliver by
+                    </h3>
+                    <Controller
+                      name="selectedRate"
+                      control={control}
+                      rules={{ required: "Please select a shipping option" }}
+                      render={({ field }) => (
+                        <div className="grid grid-cols-5 gap-5">
+                          {parcelData?.rates?.map((rate) => (
+                            <div key={rate.object_id}>
+                              <input
+                                type="radio"
+                                id={`rate-${rate.object_id}`}
+                                {...field}
+                                value={rate.object_id}
+                                checked={field.value === rate.object_id}
+                                className="h-5 w-5 text-primaryGreen focus:ring-primaryGreen rate-custom-input"
+                              />
+                              <label
+                                htmlFor={`rate-${rate.object_id}`}
+                                className="flex-1 cursor-pointer rate-custom-label inline-block overflow-hidden border rounded-[8px] w-full"
+                              >
+                                <div>
+                                  <p className="font-semibold text-[20px] bg-primaryGreen text-white provider_name text-center py-1">
+                                    {rate.servicelevel.display_name !== null
+                                      ? rate.servicelevel.display_name
+                                      : rate.provider}
+                                  </p>
+                                  <p className="font-bold text-[26px] text-center py-4 px-2">
+                                    ${rate.amount}
+                                  </p>
+                                </div>
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    />
+                    {errors.selectedRate && (
+                      <p className="error-message">
+                        {errors.selectedRate.message}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  ""
+                )}
+                {parcelData?.rates?.length === 0 && !parcelRateLoading && (
+                  <p className="py-3 px-4 border text-red-500 rounded-[8px] font-medium w-fit text-[18px] mb-5 flex items-center gap-2">
+                    <span className="text-[20px]">
+                      <MdErrorOutline />
+                    </span>
+                    We were unable to retrieve the rates for the parcel at the
+                    provided address. Please try again with a valid address.
+                  </p>
+                )}
+              </div>
               {/* trip type  */}
               <div className="flex items-center gap-[60px] pl-8 pb-10">
                 <div className="trip-type-radio">
@@ -1247,6 +1313,7 @@ const ScheduleShipment = () => {
                   <label htmlFor="oneWayTrip">One-way</label>
                 </div>
               </div>
+
               {/* pickup and handling method  */}
               <div className="grid grid-cols-2 gap-6 w-[750px]">
                 {/* date  */}
@@ -1295,16 +1362,17 @@ const ScheduleShipment = () => {
                       <Select
                         {...field}
                         onValueChange={(value) => field.onChange(value)}
+                        defaultValue="localCarrier"
                       >
                         <SelectTrigger className="shipment-select !h-[77px]">
                           <SelectValue placeholder="Select pickup location" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="myLocation !text-[18px]">
+                          <SelectItem value="myLocation" className="text-[18px]">
                             Pickup from my location{" "}
                             <span className="font-bold">+$4.99</span>
                           </SelectItem>
-                          <SelectItem value="localCarrier !text-[18px]">
+                          <SelectItem value="localCarrier" className="text-[18px]">
                             Drop off at local carrier store
                           </SelectItem>
                         </SelectContent>
@@ -1313,17 +1381,66 @@ const ScheduleShipment = () => {
                   />
                 </div>
               </div>
+              {/* payment option  */}
+              <div className="mt-10">
+                <h3 className="text-[22px] font-semibold mb-6">Choose a payment options</h3>
+                <div className="flex items-center gap-5">
+                  {/* stripe  */}
+                  <div>
+                    <input
+                      type="radio"
+                      name="paymentOption"
+                      id="stripe"
+                      value="stripe"
+                      {...register("paymentOption", {
+                        required: parcelData?.rates.length > 0,
+                      })}
+                      className="payment-input"
+                    />
+                    <label htmlFor="stripe" className="payment-label">
+                      <img
+                        className="w-10 h-10 rounded-[2px]"
+                        src={StripeImage}
+                        alt=""
+                      />
+                    </label>
+                  </div>
+                  {/* paypal  */}
+                  <div>
+                    <input
+                      type="radio"
+                      name="paymentOption"
+                      id="paypal"
+                      value="paypal"
+                      {...register("paymentOption", {
+                        required: parcelData?.rates.length > 0,
+                      })}
+                      className="payment-input"
+                    />
+                    <label htmlFor="paypal" className="payment-label">
+                      <img
+                        className="w-10 h-10 rounded-[2px]"
+                        src={PaypalImage}
+                        alt=""
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+              {errors.paymentOption && (
+                <span className="error-message">
+                  Please select a payment option.
+                </span>
+              )}
             </div>
           </div>
           <div className="text-center mt-12">
             <button type="submit">
               <PrimaryButton
-                text="Place order"
-                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen ${
-                  isValid
-                    ? "opacity-100 pointer-events-auto"
-                    : "opacity-50 pointer-events-none"
-                }`}
+                text={
+                  parcelData?.rates.length > 0 ? "Place Order" : "Get a Price"
+                }
+                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen`}
               />
             </button>
           </div>

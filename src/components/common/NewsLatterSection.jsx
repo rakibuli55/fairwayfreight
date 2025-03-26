@@ -27,7 +27,7 @@ const NewsLatterSection = ({ newsLatterData }) => {
   return (
     <section className="mt-[110px] custom-2xl:mt-[100px] custom-xl:mt-[100px] custom-lg:mt-[100px] max-md:mt-20 custom-xs:!mt-[50px] custom-sm:!mt-[50px] relative z-[1] newslatter-section">
       <div className="flex custom-xs:block custom-sm:block justify-start items-start gap-[34px] relative custom-xs:py-10 custom-xs:px-6">
-        <div className="w-[1009px] max-md:w-[100%] h-[697px] max-md:h-auto max-md:ml-[-17px] custom-xs:!h-full newslatter-image">
+        <div className="w-[1009px] max-md:w-[100%] h-[697px] max-md:h-auto max-md:ml-[-17px] custom-sm:!ml-[0] custom-xs:!h-full newslatter-image">
           <img
             className="w-full h-full object-cover banner-img custom-xs:absolute custom-xs:top-0 custom-xs:left-0"
             src={`${import.meta.env.VITE_SERVER_URL}/${
@@ -42,7 +42,7 @@ const NewsLatterSection = ({ newsLatterData }) => {
             src={newsLatterShapeRight}
             alt=""
           />
-          <div className="z-[1] absolute right-[200px] custom-2xl:right-[100px] custom-xl:right-[100px] top-1/2 translate-y-[-50%] custom-lg:right-[70px] max-md:right-auto max-md:left-10 custom-xs:translate-y-0 custom-xs:relative custom-sm:!left-0 custom-xs:!left-0">
+          <div className="z-[1] absolute right-[200px] custom-2xl:right-[100px] custom-xl:right-[100px] top-1/2 translate-y-[-50%] custom-lg:right-[70px] max-md:right-auto max-md:left-10 custom-xs:translate-y-0 custom-xs:relative custom-sm:!left-7 custom-xs:!left-0">
             <h4 className="text-[48px] font-tungsten font-bold text-heading custom-sm:text-[30px] custom-xs:text-white custom-sm:text-white custom-xs:text-[38px]">
               {/* {newsLatterData?.title} */}Subscription
             </h4>
