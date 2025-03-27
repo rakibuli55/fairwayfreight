@@ -23,6 +23,8 @@ import ShipPage from "../pages/ShipPage";
 import TrackPage from "../pages/TrackPage";
 import PrivateRoute from "../routes/PrivateRoute";
 import PublicRoute from "../routes/PublicRoute";
+import PaymentSuccess from "../pages/Pament/PaymentSuccess";
+import PaymentError from "../pages/Pament/PaymentError";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +58,22 @@ const router = createBrowserRouter([
       {
         path: "help",
         element: <HelpPage />,
+      },
+      {
+        path: "payment-success",
+        element: (
+          <PrivateRoute>
+            <PaymentSuccess />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "payment-error",
+        element: (
+          <PrivateRoute>
+            <PaymentError />
+          </PrivateRoute>
+        ),
       },
     ],
   },

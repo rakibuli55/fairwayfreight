@@ -24,6 +24,7 @@ import StripeImage from "../../assets/icons/stripe.png";
 import Container from "../../container/Container";
 import { AuthContext } from "../../context/index";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useGetPackagingSize from "../../hooks/useGetPackagingSize";
 import PrimaryButton from "../common/PrimaryButton";
 import TitleV2 from "../common/TitleV2";
 import InfoIndIcator from "./InfoIndIcator";
@@ -90,6 +91,7 @@ const ScheduleShipment = () => {
   const { bagSizeData } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
   const selectedDate = watch("date");
+  const { packageingSize } = useGetPackagingSize();
   const {
     fields: golfBagsFields,
     append: golfBagsAppend,
@@ -215,13 +217,17 @@ const ScheduleShipment = () => {
     console.log(data);
     const formValues = watch();
     const { parcels } = useGetParcel(formValues, bagSizeData);
-
+    data.rateId = data.selectedRate;
     const selectedRate = parcelData?.rates?.find(
       (rate) => rate.object_id === data.selectedRate
     );
     // access the selected rate's amount
     const selectedAmount = selectedRate ? selectedRate.amount : null;
     data.selectedRate = selectedAmount;
+    if (data?.handlingMethod === "myLocation") {
+      data.selectedRate = (Number(data.selectedRate) || 0) + 4.99;
+    }
+    console.log(typeof data.selectedRate);
 
     const fetchPercelRates = async () => {
       setParcelRateLoading(true);
@@ -264,31 +270,60 @@ const ScheduleShipment = () => {
       fetchPercelRates();
     }
 
-    // call stripe payment 
+    // call stripe payment
     const stripePay = async () => {
-      try{
-        const response = await axiosSecure.post('/stripe/checkout', {
-          total:100,
-          rate_id:"a0ec84987e714135b6b19092e00dd0a8",
-          success_url:"https://pngtree.com/freepng/flat-style-payment-success-icon-with-check-mark-vector_12869531.html",
-          cancel_url:"https://pngtree.com/freepng/cancel-stamp-template-solid-color_7820002.html",
+      try {
+        const response = await axiosSecure.post("/stripe/checkout", {
+          total: data?.selectedRate,
+          rate_id: data?.rateId,
+          success_url:
+            "http://localhost:5173/payment-success",
+          cancel_url:
+            "http://localhost:5173/payment-error",
         });
-        console.log(response);
-        if(response.status === 201){
-          window.open(response.data.data.payment_link, '_blank',);
+        if (response.status === 201) {
+          window.open(response.data.data.payment_link, "_blank");
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
       }
-    }
+    };
+    // call stripe payment
+    const paypalPay = async () => {
+      const total = Number(data.selectedRate).toFixed(2);
+      // Validate rateId exists
+      if (!data.rateId) {
+        throw new Error("Rate ID is required");
+      }
 
-    if(data.paymentOption === 'stripe'){
-      stripePay()
+      try {
+        const response = await axiosSecure.post("/paypal/checkout", {
+          total,
+          rate_id: data.rateId,
+          success_url:
+            "http://localhost:5173/payment-success",
+          cancel_url:
+            "http://localhost:5173/payment-error",
+        });
+        console.log(response);
+        if (response.status === 201) {
+          window.open(response.data.data.payment_link.href, "_blank");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (data.paymentOption === "stripe") {
+      stripePay();
+    }
+    if (data.paymentOption === "paypal") {
+      paypalPay();
     }
   };
 
   return (
-    <section className="pt-[225px] pb-[10px]">
+    <section className="pt-[225px] pb-[10px] max-md:pt-[150px] custom-xs:!pt-[120px] custom-sm:!pt-[120px]">
       <Container>
         <div className="mb-[45px]">
           <TitleV2
@@ -301,17 +336,17 @@ const ScheduleShipment = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             {/* portion one || origin-destination  */}
-            <div className="shipment-form-layout grid grid-cols-2 gap-[108px]">
+            <div className="shipment-form-layout grid grid-cols-2 gap-[108px] custom-lg:gap-[30px] max-md:gap-5 custom-sm:grid-cols-1 custom-xs:grid-cols-1">
               {/* origin  */}
               <div>
-                <p className="flex items-center justify-center gap-[6px] text-[32px] font-bold text-primaryGreen">
+                <p className="flex items-center justify-center gap-[6px] text-[32px] font-bold text-primaryGreen max-md:text-[24px]">
                   <span className="text-[28px] mb-[3px]">
                     <IoLocationSharp />
                   </span>
                   Origin
                 </p>
                 {/* tab  */}
-                <div className="mt-12">
+                <div className="mt-12 max-md:mt-6 custom-xs:!mt-5">
                   <ShipTab selectedTab={origin} onSelect={setOrigin} />
                 </div>
                 {/* inputs */}
@@ -331,7 +366,7 @@ const ScheduleShipment = () => {
                             onValueChange={field.onChange}
                             value={field.value}
                           >
-                            <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                            <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] custom-xs:rounded-[8px] border border-[#B3BAC5] px-5 focus:ring-0">
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
@@ -437,7 +472,7 @@ const ScheduleShipment = () => {
                     )}
                   </div>
                   {/* zip city state  */}
-                  <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6">
+                  <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6 max-md:grid-cols-1">
                     <div className="overflow-hidden">
                       <div>
                         <label htmlFor="originZip" className="shipment-label">
@@ -496,7 +531,7 @@ const ScheduleShipment = () => {
                               onValueChange={field.onChange}
                               value={field.value}
                             >
-                              <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                              <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0 custom-xs:rounded-[8px]">
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
                               <SelectContent>
@@ -548,14 +583,14 @@ const ScheduleShipment = () => {
               </div>
               {/* Destination  */}
               <div>
-                <p className="flex items-center justify-center gap-[6px] text-[32px] font-bold text-primaryGreen">
+                <p className="flex items-center justify-center gap-[6px] text-[32px] font-bold text-primaryGreen max-md:text-[24px] custom-xs:mt-5 custom-sm:mt-5">
                   <span className="text-[28px] mb-[3px]">
                     <IoLocationSharp />
                   </span>
                   Destination
                 </p>
                 {/* tab  */}
-                <div className="mt-12">
+                <div className="mt-12 max-md:mt-6">
                   <ShipTab
                     selectedTab={destination}
                     onSelect={setDestination}
@@ -578,7 +613,7 @@ const ScheduleShipment = () => {
                             onValueChange={field.onChange}
                             value={field.value}
                           >
-                            <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                            <SelectTrigger className="w-full h-[77px] custom-xs:rounded-[8px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
@@ -687,7 +722,7 @@ const ScheduleShipment = () => {
                     )}
                   </div>
                   {/* zip city state  */}
-                  <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6">
+                  <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6 max-md:grid-cols-1">
                     <div className="overflow-hidden">
                       <div>
                         <label
@@ -752,7 +787,7 @@ const ScheduleShipment = () => {
                               onValueChange={field.onChange}
                               value={field.value}
                             >
-                              <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                              <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0 custom-xs:rounded-[8px]">
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
                               <SelectContent>
@@ -807,16 +842,16 @@ const ScheduleShipment = () => {
               </div>
             </div>
             {/* portion two || about yourself  */}
-            <div className="shipment-form-layout mt-12">
+            <div className="shipment-form-layout mt-12 custom-sm:mt-6 custom-xs:mt-6">
               {/* title  */}
-              <div className="py-6 px-5 w-full border border-[#B3BAC5] rounded-[12px] flex items-center gap-2 text-[22px] font-semibold">
+              <div className="py-6 px-5 w-full border border-[#B3BAC5] rounded-[12px] flex items-center gap-2 text-[22px] font-semibold max-md:py-3 max-md:text-[18px]">
                 <span>
                   <FaUserAlt />
                 </span>
                 Tell us about yourself
               </div>
               {/* name email phone  */}
-              <div className="grid grid-cols-3 gap-6 pt-6 pb-12 border-b border-[#B3BAC5]">
+              <div className="grid grid-cols-3 gap-6 max-md:gap-4 custom-sm:grid-cols-1 custom-xs:grid-cols-1 custom-xs:!gap-3 pt-6 pb-12 custom-xs:pb-7 border-b border-[#B3BAC5]">
                 {/* name  */}
                 <div className="shipment-input-box">
                   <div>
@@ -886,12 +921,12 @@ const ScheduleShipment = () => {
                 </div>
               </div>
               {/* golf bags area  */}
-              <div className="golf-bags py-12 border-b border-[#B3BAC5]">
-                <p className="flex items-center gap-2 text-[32px] font-bold text-primaryGreen">
+              <div className="golf-bags py-12 custom-sm:pt-6 custom-sm:pb-0 custom-xs:pt-6 custom-xs:pb-0 border-b border-[#B3BAC5] custom-xs:border-none custom-sm:border-none">
+                <p className="flex items-center gap-2 text-[32px] max-md:text-[24px] custom-xs:!text-[20px] font-bold text-primaryGreen">
                   <img className="w-8 h-8" src={golfBag} alt="golfBag" />
                   Golf Bags
                 </p>
-                <div className="pt-6 flex items-center gap-12">
+                <div className="pt-6 flex items-center gap-12 custom-xs:gap-4 custom-sm:flex-col custom-xs:flex-col custom-xs:items-start">
                   {/* quantity  */}
                   <QuantityButton
                     quantity={golfQuantity}
@@ -903,7 +938,7 @@ const ScheduleShipment = () => {
                 </div>
                 <div>
                   {golfBagsFields.map((bag, index) => (
-                    <div key={index} className="grid grid-cols-4 gap-6 pt-6">
+                    <div key={index} className="grid grid-cols-4 gap-6 pt-6 max-md:gap-4 custom-sm:!grid-cols-1 custom-xs:!grid-cols-1 custom-xs:!gap-3">
                       {/* bag size  */}
                       <div>
                         <label htmlFor="#" className="shipment-label">
@@ -922,14 +957,16 @@ const ScheduleShipment = () => {
                                 {field.value || "Select Bag Size"}
                               </SelectTrigger>
                               <SelectContent>
-                                {bagSizeData?.map((item, index) => (
-                                  <SelectItem
-                                    key={index}
-                                    value={item?.bag_size}
-                                  >
-                                    {item?.bag_size}
-                                  </SelectItem>
-                                ))}
+                                {bagSizeData
+                                  ?.filter((size) => size.type === "golf_bag")
+                                  .map((item) => (
+                                    <SelectItem
+                                      key={index}
+                                      value={item?.bag_size}
+                                    >
+                                      {item?.bag_size}
+                                    </SelectItem>
+                                  ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -958,9 +995,14 @@ const ScheduleShipment = () => {
                                 {field.value || "Select Packaging"}
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="small">Small</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="large">Large</SelectItem>
+                                {packageingSize?.map((item, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={item?.packaging}
+                                  >
+                                    {item?.packaging}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -1053,12 +1095,12 @@ const ScheduleShipment = () => {
                 </div>
               </div>
               {/* luggage bags area  */}
-              <div className="luggage-bags py-12 border-b border-[#B3BAC5]">
-                <p className="flex items-center gap-2 text-[32px] font-bold text-primaryGreen">
+              <div className="luggage-bags py-12 custom-sm:pt-6 custom-sm:pb-0 custom-xs:pt-6 custom-xs:pb-0 border-b border-[#B3BAC5] custom-sm:border-none custom-xs:border-none">
+                <p className="flex items-center gap-2 text-[32px] max-md:text-[24px] custom-xs:!text-[20px] font-bold text-primaryGreen">
                   <img className="w-8 h-8" src={luggageBag} alt="golfBag" />
                   Luggage Bags
                 </p>
-                <div className="pt-6 flex items-center gap-12">
+                <div className="pt-6 flex items-center gap-12 custom-xs:gap-4 custom-sm:flex-col custom-xs:flex-col custom-xs:items-start">
                   <QuantityButton
                     quantity={luggageQuantity}
                     onIncrease={increaseQuantity}
@@ -1069,7 +1111,7 @@ const ScheduleShipment = () => {
                 </div>
                 <div>
                   {luggageBagsFields.map((bag, index) => (
-                    <div key={index} className="grid grid-cols-4 gap-6 pt-6">
+                    <div key={index} className="grid grid-cols-4 gap-6 pt-6 max-md:gap-4 custom-sm:grid-cols-1 custom-xs:grid-cols-1 custom-xs:!gap-3">
                       {/* bag size  */}
                       <div>
                         <label htmlFor="#" className="shipment-label">
@@ -1088,14 +1130,18 @@ const ScheduleShipment = () => {
                                 {field.value || "Select Bag Size"}
                               </SelectTrigger>
                               <SelectContent>
-                                {bagSizeData?.map((item, index) => (
-                                  <SelectItem
-                                    key={index}
-                                    value={item?.bag_size}
-                                  >
-                                    {item?.bag_size}
-                                  </SelectItem>
-                                ))}
+                                {bagSizeData
+                                  ?.filter(
+                                    (size) => size.type === "luggage_bag"
+                                  )
+                                  .map((item) => (
+                                    <SelectItem
+                                      key={index}
+                                      value={item?.bag_size}
+                                    >
+                                      {item?.bag_size}
+                                    </SelectItem>
+                                  ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -1124,9 +1170,14 @@ const ScheduleShipment = () => {
                                 {field.value || "Select Packaging"}
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="small">Small</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="large">Large</SelectItem>
+                                {packageingSize?.map((item, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={item?.packaging}
+                                  >
+                                    {item?.packaging}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           )}
@@ -1220,7 +1271,7 @@ const ScheduleShipment = () => {
               </div>
             </div>
             {/* portion three || trip category  */}
-            <div className="shipment-form-layout mt-12">
+            <div className="shipment-form-layout mt-12 custom-sm:mt-6 custom-xs:mt-6">
               {/* parcels rate if have  */}
               <div>
                 {parcelRateLoading ? (
@@ -1288,7 +1339,7 @@ const ScheduleShipment = () => {
                 )}
               </div>
               {/* trip type  */}
-              <div className="flex items-center gap-[60px] pl-8 pb-10">
+              <div className="flex items-center gap-[60px] pl-8 pb-10 custom-xs:pb-5 custom-sm:pb-5">
                 <div className="trip-type-radio">
                   <input
                     type="radio"
@@ -1315,7 +1366,7 @@ const ScheduleShipment = () => {
               </div>
 
               {/* pickup and handling method  */}
-              <div className="grid grid-cols-2 gap-6 w-[750px]">
+              <div className="grid grid-cols-2 gap-6 w-[750px] max-md:w-full max-md:gap-4 custom-sm:grid-cols-1 custom-xs:grid-cols-1">
                 {/* date  */}
                 <div className="relative">
                   <label htmlFor="pickupdate" className="shipment-label">
@@ -1364,15 +1415,21 @@ const ScheduleShipment = () => {
                         onValueChange={(value) => field.onChange(value)}
                         defaultValue="localCarrier"
                       >
-                        <SelectTrigger className="shipment-select !h-[77px]">
+                        <SelectTrigger className="shipment-select !h-[77px] custom-xs:rounded-[8px] max-md:!h-[50px]">
                           <SelectValue placeholder="Select pickup location" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="myLocation" className="text-[18px]">
+                          <SelectItem
+                            value="myLocation"
+                            className="text-[18px]"
+                          >
                             Pickup from my location{" "}
                             <span className="font-bold">+$4.99</span>
                           </SelectItem>
-                          <SelectItem value="localCarrier" className="text-[18px]">
+                          <SelectItem
+                            value="localCarrier"
+                            className="text-[18px]"
+                          >
                             Drop off at local carrier store
                           </SelectItem>
                         </SelectContent>
@@ -1382,8 +1439,10 @@ const ScheduleShipment = () => {
                 </div>
               </div>
               {/* payment option  */}
-              <div className="mt-10">
-                <h3 className="text-[22px] font-semibold mb-6">Choose a payment options</h3>
+              <div className="mt-10 custom-xs:mt-5 custom-sm:mt-5">
+                <h3 className="text-[22px] font-semibold mb-6 custom-xs:text-[20px] custom-sm:text-[20px] custom-xs:mb-3 custom-sm:mb-3">
+                  Choose a payment options
+                </h3>
                 <div className="flex items-center gap-5">
                   {/* stripe  */}
                   <div>
@@ -1434,13 +1493,13 @@ const ScheduleShipment = () => {
               )}
             </div>
           </div>
-          <div className="text-center mt-12">
+          <div className="text-center mt-12 custom-xs:mt-7 custom-sm:mt-7">
             <button type="submit">
               <PrimaryButton
                 text={
                   parcelData?.rates.length > 0 ? "Place Order" : "Get a Price"
                 }
-                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen`}
+                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen max-md:py-3 max-md:px-7`}
               />
             </button>
           </div>

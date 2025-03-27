@@ -7,35 +7,51 @@ const OrderTable = ({ orders }) => {
         <thead>
           <tr>
             <th>Created</th>
-            <th>Order ID</th>
             <th>Tracking ID</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Pickup Date</th>
+            <th>Tracking Link</th>
+            <th>Status</th>
             <th>Receipt</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => (
-            <tr key={index}>
-              <td>{order.created}</td>
-              <td>{order.orderId}</td>
-              <td>{order.trackingId}</td>
-              <td>{order.from}</td>
-              <td>{order.to}</td>
-              <td>{order.pickupDate}</td>
-              <td>
-                <a
-                  href={`#${order.receipt}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[30px]"
-                >
-                  <BsFilePdf />
-                </a>
-              </td>
-            </tr>
-          ))}
+          {orders?.length > 0 ? (
+            orders?.map((order, index) => (
+              <tr key={index}>
+                <td>
+                  {new Date(order?.created_at).toLocaleString("en-us", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </td>
+                <td>{order?.tracking_number}</td>
+                <td>
+                  <a
+                    href={order?.tracking_url_provider}
+                    className="text-[#22a779] block whitespace-nowrap w-[300px] overflow-hidden"
+                  >
+                    {order?.tracking_url_provider}
+                  </a>
+                </td>
+                <td className="capitalize">{order?.status}</td>
+                <td>
+                  <a
+                    href={`${order?.label_url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[30px]"
+                  >
+                    <BsFilePdf />
+                  </a>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <p className="text-[24px] font-bold w-full mt-6">
+              No shipment history found
+            </p>
+          )}
         </tbody>
       </table>
     </div>

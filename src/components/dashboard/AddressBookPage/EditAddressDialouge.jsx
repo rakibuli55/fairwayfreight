@@ -9,8 +9,10 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import PrimaryButton from "../../../components/common/PrimaryButton";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const EditAddressDialouge = ({ address, onClose }) => {
+  console.log("address", address);
   const {
     register,
     handleSubmit,
@@ -25,14 +27,25 @@ const EditAddressDialouge = ({ address, onClose }) => {
       city: address?.city || "",
       zip: address?.zip || "",
       address: address?.address || "",
-      state:address.state || ""
+      state: address.state || "",
     },
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const axiosSecure = useAxiosSecure()
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
+    setIsLoading(true)
+    data.type = address?.type;
+    try{
+      const response = await axiosSecure.post(`/update-address/${address?.id}`, data);
+      console.log(response);
+    }catch(error){
+      console.log(error);
+    }finally{
+      setIsLoading(false)
+    }
   };
 
   return (
@@ -126,34 +139,23 @@ const EditAddressDialouge = ({ address, onClose }) => {
               {/* address  */}
               <div className="shipment-input-box mt-5">
                 <div>
-                  <label htmlFor="streetAddress" className="shipment-label">
+                  <label htmlFor="address" className="shipment-label">
                     Address <span>*</span>
                   </label>
                   <input
                     type="text"
-                    name="streetAddress"
-                    id="streetAddress"
+                    name="address"
+                    id="address"
                     placeholder="Street Address"
                     className="shipment-input"
-                    {...register("streetAddress", {
+                    {...register("address", {
                       required: "Please enter a street address",
                     })}
                   />
-                  <input
-                    type="text"
-                    name="addresApartment"
-                    id="addresApartment"
-                    placeholder="Apartment suite, unit, building, floor, etc."
-                    className="shipment-input mt-6"
-                    {...register("addresApartment", {
-                      required:
-                        "Please enter apartment suite, unit, building, floor, etc",
-                    })}
-                  />
                 </div>
-                {errors.streetAddress && (
+                {errors.address && (
                   <p className="error-message">
-                    {errors.streetAddress.message}
+                    {errors.address.message}
                   </p>
                 )}
                 {errors.addresApartment && (

@@ -1,29 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
 import OrderTable from "../../components/dashboard/ShipmentPage/OrderTable";
 import BackButton from "../../components/dashboard/common/BackButton";
 import MainTitle from "../../components/dashboard/common/MainTitle";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-const orders = [
-  {
-    created: "#DHGA18",
-    orderId: "Robert Fox",
-    trackingId: "Jenny Wilson",
-    from: "#DHGA18",
-    to: "02/02/2015",
-    pickupDate: "05/02/2015",
-    receipt: "link1", 
-  },
-  {
-    created: "#DHGA18",
-    orderId: "Robert Fox",
-    trackingId: "Jenny Wilson",
-    from: "#DHGA18",
-    to: "02/02/2015",
-    pickupDate: "05/02/2015",
-    receipt: "link2",
-  },
-];
+
 
 const ShipmentHistory = () => {
+  const axiosSecure = useAxiosSecure()
+
+  const {data:shipmentsData, isLoading:shipmentDataLoading} = useQuery({
+    queryKey: ['dash-shipment-data'],
+    queryFn: async () => {
+      const response = await axiosSecure.get('/shipments-history');
+      return response?.data?.data;
+    }
+  });
+
+  console.log('shipmentsData',shipmentsData);
+
   return (
     <section className="bg-white p-9 rounded-[16px]">
       <div>
@@ -33,7 +28,7 @@ const ShipmentHistory = () => {
             <BackButton />
           </div>
           <div>
-            <OrderTable orders={orders} />
+            <OrderTable orders={shipmentsData} />
           </div>
         </div>
       </div>

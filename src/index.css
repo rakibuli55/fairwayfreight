@@ -325,7 +325,7 @@
     @apply p-5 text-[18px] text-heading border rounded-[12px] w-full focus:outline-none;
   }
   .shipment-form-layout {
-    @apply py-[90px] px-[124px] border border-primaryGreen rounded-[24px];
+    @apply py-[90px] px-[124px] border border-primaryGreen rounded-[24px] custom-xl:p-[60px] custom-lg:p-[30px] max-md:px-5 max-md:py-10 custom-xs:!py-5 custom-xs:rounded-[12px] custom-xs:!px-4;
   }
   .shipment-label {
     @apply block text-[18px] font-bold capitalize text-heading mb-2;
@@ -334,7 +334,7 @@
     @apply text-red-500;
   }
   .shipment-input {
-    @apply py-6 px-5 border border-[#B3BAC5] rounded-[12px] text-[18px] text-heading w-full focus:outline-none;
+    @apply py-6 px-5 border border-[#B3BAC5] rounded-[12px] text-[18px] text-heading w-full focus:outline-none max-md:py-3 custom-xs:text-base custom-xs:rounded-[8px];
   }
   .error-message {
     @apply text-sm text-red-500 mt-2;
@@ -344,18 +344,18 @@
     @apply absolute top-1/2 translate-y-[-50%] left-0;
   }
   .shipment-select {
-    @apply !h-[72px] !px-5 !rounded-[12px] focus:!ring-0 !text-[18px] capitalize;
+    @apply !h-[72px] !px-5 !rounded-[12px] focus:!ring-0 !text-[18px] capitalize max-md:!h-[50px] custom-xs:!text-base;
   }
   .trip-type-radio label {
-    @apply inline-block text-[32px] text-heading font-bold relative cursor-pointer;
+    @apply inline-block text-[32px] max-md:text-[22px] text-heading font-bold relative cursor-pointer custom-xs:!text-[20px] custom-sm:!text-[20px];
   }
   .trip-type-radio label:before {
     content: "";
-    @apply absolute top-1/2 translate-y-[-50%] left-[-35px] h-6 w-6 border-[2px] border-primaryGreen rounded-[14px];
+    @apply absolute top-1/2 translate-y-[-50%] left-[-35px] h-6 w-6 border-[2px] border-primaryGreen rounded-[14px] custom-sm:h-5 custom-sm:w-5 custom-sm:left-[-28px] custom-xs:h-5 custom-xs:w-5 custom-xs:left-[-28px];
   }
   .trip-type-radio input:checked + label:after {
     content: "";
-    @apply absolute top-1/2 translate-y-[-50%] left-[-31px] w-[15px] h-[15px] rounded-full bg-primaryGreen;
+    @apply absolute top-1/2 translate-y-[-50%] left-[-31px] w-[15px] h-[15px] rounded-full bg-primaryGreen custom-sm:w-[12px] custom-sm:h-[12px] custom-sm:left-[-24px] custom-xs:w-[12px] custom-xs:h-[12px] custom-xs:left-[-24px];
   }
   .active-menu-link {
     @apply bg-primaryGreen !text-white;

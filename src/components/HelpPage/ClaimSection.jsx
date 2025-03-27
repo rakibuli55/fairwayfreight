@@ -11,7 +11,6 @@ const ClaimSection = () => {
         queryKey:['claimData'],
         queryFn: async () => {
             const res = await api.get('/claims');
-            console.log(res);
             return res?.data?.data;
         }
     })

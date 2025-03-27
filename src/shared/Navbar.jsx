@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
+import { IoCloseOutline } from "react-icons/io5";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import UserDropdown from "../components/common/UserDropdown";
 import Container from "../container/Container";
@@ -71,7 +72,7 @@ const Navbar = () => {
           <div className="flex items-center gap-[280px]">
             {/* menu  */}
             <ul
-              className={`flex items-center gap-[64px] custom-lg:gap-10 max-md:fixed max-md:top-0 max-md:left-0 max-md:h-full max-md:bg-primaryGreen max-md:w-[260px] max-md:flex-col max-md:gap-4 max-md:items-start max-md:pl-8 max-md:pt-[20px] duration-200 ease-in-out ${
+              className={`flex items-center gap-[64px] custom-lg:gap-10 max-md:fixed max-md:top-0 max-md:left-0 max-md:h-full max-md:bg-primaryGreen max-md:w-[260px] max-md:flex-col max-md:gap-4 max-md:items-start max-md:pl-8 max-md:pt-[20px] duration-200 ease-in-out max-md:z-[10] ${
                 sidebarOpen
                   ? "max-md:opacity-100 max-md:visible max-md:left-0"
                   : "max-md:opacity-0 max-md:invisible max-md:left-[-260px]"
@@ -81,8 +82,8 @@ const Navbar = () => {
                 <img
                   className="w-[223px] h-[48px] custom-lg:w-[190px] max-md:w-[170px]"
                   src={`${import.meta.env.VITE_SERVER_URL}/${
-                          siteSettingsData?.white_logo
-                        }`}
+                    siteSettingsData?.white_logo
+                  }`}
                   alt="logo"
                 />
               </Link>
@@ -135,10 +136,12 @@ const Navbar = () => {
               </>
             )}
             <p
-              className="text-[26px] hidden max-md:block text-white"
+              className={`text-[26px] hidden max-md:block ${
+                location.pathname === "/" ? "text-white" : "text-heading"
+              }`}
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
-              <HiOutlineMenuAlt3 />
+              {sidebarOpen ? <IoCloseOutline /> : <HiOutlineMenuAlt3 />}
             </p>
           </div>
         </div>

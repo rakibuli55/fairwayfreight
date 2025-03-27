@@ -24,7 +24,7 @@ const AddressBookPage = () => {
   });
 
   const home_address = addressList?.filter(address => address.type === 'home');
-  const golf_club_Address = addressList?.filter(address => address.type === 'golf_club');
+  const golf_club_Address = addressList?.filter(address => address.type === 'club');
 
   return (
     <section className="bg-white p-9 rounded-[16px]">

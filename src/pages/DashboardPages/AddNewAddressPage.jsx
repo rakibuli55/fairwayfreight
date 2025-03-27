@@ -160,26 +160,10 @@ const AddressBookPage = () => {
                       required: "Please enter a street address",
                     })}
                   />
-                  <input
-                    type="text"
-                    name="addresApartment"
-                    id="addresApartment"
-                    placeholder="Apartment suite, unit, building, floor, etc."
-                    className="shipment-input mt-6"
-                    {...register("addresApartment", {
-                      required:
-                        "Please enter apartment suite, unit, building, floor, etc",
-                    })}
-                  />
                 </div>
                 {errors.streetAddress && (
                   <p className="error-message">
                     {errors.streetAddress.message}
-                  </p>
-                )}
-                {errors.addresApartment && (
-                  <p className="error-message">
-                    {errors.addresApartment.message}
                   </p>
                 )}
               </div>

@@ -5,10 +5,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { api } from "../../api/index";
 import dhlStore from "../../assets/icons/dhl.svg";
 import fedExStore from "../../assets/icons/fedex.svg";
 import upsStore from "../../assets/icons/ups.svg";
+import dhlCircle from "../../assets/images/dhl-circle.png";
+import fedExCircle from "../../assets/images/fedex-circle.png";
+import upsCircle from "../../assets/images/ups-circle.png";
 import Container from "../../container/Container";
 import PrimaryButton from "../common/PrimaryButton";
 import TitleV2 from "../common/TitleV2";
@@ -21,9 +28,122 @@ const HelpSection = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  }
+  const [map, setMap] = useState(null);
+  const [service, setService] = useState(null);
+  const [markers, setMarkers] = useState([]);
+
+  // fetch all country
+  const { data: allCountry, isLoading: countryDataLoading } = useQuery({
+    queryKey: ["help-country-data"],
+    queryFn: async () => {
+      const response = await api.get(
+        "https://countriesnow.space/api/v0.1/countries/states"
+      );
+      return response.data.data;
+    },
+  });
+
+  useEffect(() => {
+    // Load Google Maps API script dynamically
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA_G_EhWhTWpRYaE6_kR8txUKUkmZkvNiQ&libraries=places`;
+    script.async = true;
+    script.onload = () => {
+      initMap();
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // Initialize the map and set Google Places service
+  const initMap = () => {
+    const mapInstance = new window.google.maps.Map(
+      document.getElementById("map"),
+      {
+        center: { lat: 37.7749, lng: -122.4194 }, // Default to San Francisco
+        zoom: 13,
+      }
+    );
+
+    const serviceInstance = new window.google.maps.places.PlacesService(
+      mapInstance
+    );
+    setMap(mapInstance);
+    setService(serviceInstance);
+  };
+
+  const onSubmit = async (data) => {
+    markers?.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+    // Get the address input from the form
+    const address = data.address;
+    const geocodeRequest = {
+      address: address,
+    };
+
+    // Geocode the address to get latitude and longitude
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode(geocodeRequest, (results, status) => {
+      if (status === window.google.maps.GeocoderStatus.OK) {
+        const { lat, lng } = results[0].geometry.location;
+
+        // Center the map to the entered address
+        map.setCenter(new window.google.maps.LatLng(lat(), lng()));
+
+        // Perform a nearby search for the selected store type (FedEx, UPS, DHL)
+        const keyword =
+          data.provider === "ups"
+            ? "UPS"
+            : data.provider === "fedex"
+            ? "FedEx"
+            : "DHL";
+        const request = {
+          location: new window.google.maps.LatLng(lat(), lng()),
+          radius: 5000, // 5 km radius
+          keyword: keyword, // Search for selected store type
+          types: ["courier_service"],
+        };
+
+        service.nearbySearch(request, (results, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+            const newMarkers = results.map((place) => {
+              const marker = new window.google.maps.Marker({
+                map: map,
+                position: place.geometry.location,
+                title: place.name,
+                icon: {
+                  url:
+                    keyword === "DHL"
+                      ? dhlCircle
+                      : keyword === "FedEx"
+                      ? fedExCircle
+                      : upsCircle,
+                  scaledSize: new window.google.maps.Size(24, 24), 
+                },
+              });
+
+              const infowindow = new window.google.maps.InfoWindow({
+                content: place.name,
+              });
+
+              marker.addListener("click", () => {
+                infowindow.open(map, marker);
+              });
+              return marker;
+            });
+            setMarkers(newMarkers);
+          }
+        });
+      } else {
+        toast.error(
+          "Could not get the location. Please try again with valid address."
+        );
+      }
+    });
+  };
 
   return (
     <section className="pt-[210px] pb-[120px]">
@@ -44,46 +164,22 @@ const HelpSection = () => {
                   {/* input-inner  */}
                   <div className="input-inner">
                     <label htmlFor="zipCode">
-                      <span>*</span> Zip Code
-                    </label>
-                    <input
-                      type="number"
-                      className="help-input"
-                      placeholder="Zip Code"
-                      name="zipCode"
-                      id="zipCode"
-                      {...register("zipCode", {
-                        required: "Please enter zip code",
-                      })}
-                    />
-                  </div>
-                  {errors.zipCode && (
-                    <p className="text-sm mt-1 text-red-500">
-                      {errors.zipCode.message}
-                    </p>
-                  )}
-                </div>
-                {/* help-input-feild  */}
-                <div className="help-input-feild">
-                  {/* input-inner  */}
-                  <div className="input-inner">
-                    <label htmlFor="trackingId">
-                      <span>*</span> Tracking ID
+                      <span>*</span> Address
                     </label>
                     <input
                       type="text"
                       className="help-input"
-                      placeholder="Tracking ID"
-                      name="trackingId"
-                      id="trackingId"
-                      {...register("trackingId", {
-                        required: "Please enter tracking id",
+                      placeholder="Enter address"
+                      name="address"
+                      id="address"
+                      {...register("address", {
+                        required: "Please enter a valid address",
                       })}
                     />
                   </div>
-                  {errors.trackingId && (
+                  {errors.address && (
                     <p className="text-sm mt-1 text-red-500">
-                      {errors.trackingId.message}
+                      {errors.address.message}
                     </p>
                   )}
                 </div>
@@ -99,14 +195,19 @@ const HelpSection = () => {
                       control={control}
                       rules={{ required: "Please select a country" }}
                       render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="w-[203px] h-[70px] rounded-[12px] text-[18px] px-5 text-paragraph focus:ring-0">
                             <SelectValue placeholder="Select a country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="usa">USA</SelectItem>
-                            <SelectItem value="canada">Canada</SelectItem>
-                            <SelectItem value="australia">Australia</SelectItem>
+                            {allCountry?.map((country) => (
+                              <SelectItem value={country?.name}>
+                                {country?.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       )}
@@ -133,12 +234,12 @@ const HelpSection = () => {
                           className="help-input"
                           name="store-input"
                           value="ups"
-                          id="storeType"
-                          {...register("storeType", {
+                          id="ups"
+                          {...register("provider", {
                             required: "Please select a store type",
                           })}
                         />
-                        <label htmlFor="storeType">
+                        <label htmlFor="ups">
                           <img src={upsStore} alt="upsStore" />
                         </label>
                       </div>
@@ -150,7 +251,7 @@ const HelpSection = () => {
                           name="store-input"
                           value="fedex"
                           id="fedEx"
-                          {...register("storeType", {
+                          {...register("provider", {
                             required: "Please select a store type",
                           })}
                         />
@@ -166,7 +267,7 @@ const HelpSection = () => {
                           name="store-input"
                           value="dhl"
                           id="dhl"
-                          {...register("storeType", {
+                          {...register("provider", {
                             required: "Please select a store type",
                           })}
                         />
@@ -176,6 +277,9 @@ const HelpSection = () => {
                       </div>
                     </div>
                   </div>
+                  {errors.provider && (
+                    <p className="error-message">{errors.provider.message}</p>
+                  )}
                 </div>
                 {/* help-input-feild  */}
                 <div className="help-input-feild flex items-center justify-center">
@@ -187,19 +291,16 @@ const HelpSection = () => {
                   </button>
                 </div>
                 <p className="text-[18px] text-primaryGreen pt-10 font-semibold">
-                    Please match the carrier on your shipping label with the
-                    corresponding carrier drop off location.
-                  </p>
+                  Please match the carrier on your shipping label with the
+                  corresponding carrier drop off location.
+                </p>
               </form>
             </div>
             <div className="w-[50%] pl-[30px]">
-              <div className="map-area">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d8933203.645616453!2d-101.62925491903955!3d39.37117420208103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1741055447813!5m2!1sen!2sbd"
-                  loading="lazy"
-                  className="w-full h-[1060px] border-[5px] border-heading rounded-[16px]"
-                ></iframe>
-              </div>
+              <div
+                id="map"
+                className="h-[850px] rounded-[16px] border-[5px] border-heading"
+              ></div>
             </div>
           </div>
         </div>
