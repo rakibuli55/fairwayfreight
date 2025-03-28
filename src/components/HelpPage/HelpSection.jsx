@@ -146,16 +146,16 @@ const HelpSection = () => {
   };
 
   return (
-    <section className="pt-[210px] pb-[120px]">
+    <section className="pt-[210px] pb-[120px] custom-md:pt-[150px] custom-md:pb-[100px] custom-sm:pt-[150px] custom-sm:pb-[80px] custom-xs:pt-[130px] custom-xs:!pb-[60px]">
       <Container>
         <div>
           {/* title  */}
-          <div className="mb-[60px]">
+          <div className="mb-[60px] custom-md:mb-10 custom-sm:mb-8 custom-xs:mb-8">
             <TitleV2 subTitle="HELP" title="Help" description="" />
           </div>
-          <div className="flex items-start">
-            <div className="w-[50%] pr-[30px]">
-              <h4 className="text-[32px] font-bold text-primaryGreen pb-3 border-b border-[#B3BAC5]">
+          <div className="flex items-start custom-lg:block max-md:block">
+            <div className="w-[50%] pr-[30px] custom-lg:pr-0 max-md:pr-0 custom-lg:w-full max-md:w-full">
+              <h4 className="text-[32px] font-bold text-primaryGreen pb-3 border-b border-[#B3BAC5] custom-md:text-[24px] max-md:pb-6 custom-sm:text-[20px] custom-xs:text-[20px]">
                 Search for a drop-off location near you
               </h4>
               <form onSubmit={handleSubmit(onSubmit)}>
@@ -199,7 +199,7 @@ const HelpSection = () => {
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="w-[203px] h-[70px] rounded-[12px] text-[18px] px-5 text-paragraph focus:ring-0">
+                          <SelectTrigger className="w-[203px] max-md:w-[80%] custom-xs:!w-full custom-xs:!h-[55px] h-[70px] max-md:h-[60px] rounded-[12px] text-[18px] px-5 text-paragraph focus:ring-0">
                             <SelectValue placeholder="Select a country" />
                           </SelectTrigger>
                           <SelectContent>
@@ -222,16 +222,16 @@ const HelpSection = () => {
                 {/* help-input-feild  */}
                 <div className="help-input-feild store-type">
                   {/* input-inner  */}
-                  <div className="input-inner !w-full">
-                    <label htmlFor="#">
+                  <div className="input-inner !w-full max-md:!block">
+                    <label htmlFor="#" className="max-md:mb-5 max-md:block">
                       <span>*</span> Store Type
                     </label>
-                    <div className="stores grid grid-cols-2 gap-6">
+                    <div className="stores grid grid-cols-2 gap-6 custom-xs:grid-cols-1 custom-xs:gap-2">
                       {/* store type */}
                       <div>
                         <input
                           type="radio"
-                          className="help-input"
+                          className="help-input max-md:!w-full"
                           name="store-input"
                           value="ups"
                           id="ups"
@@ -247,7 +247,7 @@ const HelpSection = () => {
                       <div>
                         <input
                           type="radio"
-                          className="help-input"
+                          className="help-input max-md:!w-full"
                           name="store-input"
                           value="fedex"
                           id="fedEx"
@@ -263,7 +263,7 @@ const HelpSection = () => {
                       <div>
                         <input
                           type="radio"
-                          className="help-input"
+                          className="help-input max-md:!w-full"
                           name="store-input"
                           value="dhl"
                           id="dhl"
@@ -286,7 +286,7 @@ const HelpSection = () => {
                   <button className="w-[440px]">
                     <PrimaryButton
                       text="Search Stores"
-                      className="p-4 bg-primaryGreen text-white rounded-[40px] font-bold justify-center duration-200 ease-in-out hover:bg-primaryGreen"
+                      className="p-4 bg-primaryGreen text-white rounded-[40px] font-bold justify-center duration-200 ease-in-out hover:bg-primaryGreen custom-xs:p-3"
                     />
                   </button>
                 </div>
@@ -296,10 +296,10 @@ const HelpSection = () => {
                 </p>
               </form>
             </div>
-            <div className="w-[50%] pl-[30px]">
+            <div className="w-[50%] pl-[30px] custom-lg:w-full custom-lg:pl-0 custom-lg:mt-10 max-md:w-full max-md:pl-0 max-md:mt-10 custom-xs:!mt-5">
               <div
                 id="map"
-                className="h-[850px] rounded-[16px] border-[5px] border-heading"
+                className="h-[850px] custom-md:h-[600px] custom-sm:h-[400px] custom-xs:h-[340px] rounded-[16px] border-[5px] border-heading"
               ></div>
             </div>
           </div>

@@ -48,16 +48,16 @@ const SignupPage = () => {
   };
 
   return (
-    <section className="py-[56px] px-[200px]">
+    <section className="py-[56px] custom-xs:py-7 px-[200px] extra-large:px-[100px] custom-2xl:px-[100px] custom-xl:px-20 custom-lg:px-10 max-md:px-10 custom-xs:!px-6">
       <div>
         <Link to={"/"}>
-          <img className="w-[409px] h-[90px] mx-auto" src={Logo} alt="" />
+          <img className="w-[409px] h-[90px] custom-2xl:w-[300px] custom-xl:w-[290px] custom-lg:w-[250px] max-md:w-[240px] custom-xs:!w-[200px] mx-auto" src={Logo} alt="" />
         </Link>
-        <div className="pt-[125px]">
+        <div className="pt-[125px] custom-2xl:pt-20 custom-xl:pt-[60px] custom-lg:pt-[60px] max-md:pt-[60px] custom-xs:!pt-[30px]">
           <h1 className="auth-title text-center">Sign Up</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* photo uploader  */}
-            <div className="mb-[64px]">
+            <div className="mb-[64px] custom-xs:mb-10">
               <input
                 type="file"
                 id="photoUploder"
@@ -83,9 +83,9 @@ const SignupPage = () => {
                     <IoCameraOutline />
                   )}
                 </label>
-                <p className="text-[24px] font-bold text-heading">
+                <p className="text-[24px] font-bold text-heading custom-xs:text-[18px]">
                   Add your photo{" "}
-                  <span className="font-normal text-[18px]">
+                  <span className="font-normal text-[18px] custom-xs:text-sm">
                     (Less than 2MB)
                   </span>
                 </p>
@@ -115,7 +115,7 @@ const SignupPage = () => {
               )}
             </div>
             {/* auth-input-box  */}
-            <div className="auth-input-box mt-7">
+            <div className="auth-input-box mt-7 custom-xs:mt-4">
               <div>
                 <label htmlFor="first_name">Last Name</label>
                 <input
@@ -138,7 +138,7 @@ const SignupPage = () => {
               )}
             </div>
             {/* auth-input-box  */}
-            <div className="auth-input-box mt-7">
+            <div className="auth-input-box mt-7 custom-xs:mt-4">
               <div>
                 <label htmlFor="phone">Phone</label>
                 <input
@@ -161,7 +161,7 @@ const SignupPage = () => {
               )}
             </div>
             {/* auth-input-box  */}
-            <div className="auth-input-box mt-7">
+            <div className="auth-input-box mt-7 custom-xs:mt-4">
               <div>
                 <label htmlFor="email">Email Address</label>
                 <input
@@ -184,7 +184,7 @@ const SignupPage = () => {
               )}
             </div>
             {/* auth-input-box  */}
-            <div className="auth-input-box mt-7">
+            <div className="auth-input-box mt-7 custom-xs:mt-4">
               <div>
                 <label htmlFor="password">Password</label>
                 <input
@@ -216,7 +216,7 @@ const SignupPage = () => {
               )}
             </div>
             {/* auth-input-box  */}
-            <div className="auth-input-box mt-7">
+            <div className="auth-input-box mt-7 custom-xs:mt-4">
               <div>
                 <label htmlFor="password_confirmation">Confirm Password</label>
                 <input
@@ -247,7 +247,7 @@ const SignupPage = () => {
               <button className="w-full">
                 <PrimaryButton
                   text={isLoading ? "Signing Up..." : "Sign Up"}
-                  className={`p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center ${
+                  className={`p-4 w-full bg-primaryGreen text-white font-bold border-[2px] border-primaryGreen duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen rounded-[40px] justify-center custom-xs:py-3 ${
                     isLoading
                       ? "opacity-30 pointer-events-none"
                       : "pointer-events-auto opacity-100"
@@ -256,7 +256,7 @@ const SignupPage = () => {
               </button>
             </div>
             {/* new user  */}
-            <div className="text-[18px] text-paragraph pt-14 pb-10 text-center">
+            <div className="text-[18px] text-paragraph pt-14 pb-10 custom-xs:pt-10 text-center">
               Already have an account?{" "}
               <Link
                 to={"/auth/login"}

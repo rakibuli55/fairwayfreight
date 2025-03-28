@@ -22,10 +22,10 @@ const AllBlogsSection = () => {
     setCurrentPage(page);
   };
   return (
-    <section className="pt-[225px] pb-[10px]">
+    <section className="pt-[225px] pb-[10px] custom-xs:pb-0 custom-md:pt-[165px] custom-sm:pt-[155px] custom-xs:pt-[120px]">
       <Container>
         {/* title  */}
-        <div className="mb-[62px]">
+        <div className="mb-[62px] max-md:mb-10">
           <TitleV2
             subTitle="Blogs"
             title="Golf Updates & Insights"
@@ -33,20 +33,20 @@ const AllBlogsSection = () => {
           />
         </div>
         {blogLoading ? (
-          <div className="grid grid-cols-2 gap-x-[30px] gap-y-12">
+          <div className="grid grid-cols-2 gap-x-[30px] gap-y-12 custom-xs:gap-y-8 max-md:grid-cols-1">
             {Array.from({ length: 4 }, (_, index) => (
               <BlogSkeleton key={index} />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-x-[30px] gap-y-12">
+          <div className="grid grid-cols-2 gap-x-[30px] gap-y-12 custom-xs:gap-y-8 max-md:grid-cols-1">
             {blogData?.data?.map((item) => (
               <BlogCard key={item?.id} item={item} />
             ))}
           </div>
         )}
 
-        <div className="mt-[60px]">
+        <div className="mt-[60px] custom-xs:mt-10">
           <PaginationCommon
             currentPage={currentPage}
             lastPage={blogData?.last_page}

@@ -44,7 +44,7 @@ const NewsLatterSection = ({ newsLatterData }) => {
           />
           <div className="z-[1] absolute right-[200px] custom-2xl:right-[100px] custom-xl:right-[100px] top-1/2 translate-y-[-50%] custom-lg:right-[70px] max-md:right-auto max-md:left-10 custom-xs:translate-y-0 custom-xs:relative custom-sm:!left-7 custom-xs:!left-0">
             <h4 className="text-[48px] font-tungsten font-bold text-heading custom-sm:text-[30px] custom-xs:text-white custom-sm:text-white custom-xs:text-[38px]">
-              {/* {newsLatterData?.title} */}Subscription
+              {newsLatterData?.title}
             </h4>
             <p className="text-[18px] text-paragraph mt-1 custom-sm:w-[300px] custom-xs:text-white custom-sm:text-white ">
               {newsLatterData?.sub_title}

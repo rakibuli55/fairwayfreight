@@ -1,3 +1,4 @@
+import { api } from "@/api";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import {
   Select,
@@ -6,17 +7,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import PrimaryButton from "../../../components/common/PrimaryButton";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const EditAddressDialouge = ({ address, onClose }) => {
-  console.log("address", address);
+  const queryClient = useQueryClient();
+  const [states, setStates] = useState(null);
+  const [allCountries, setAllCountries] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const axiosSecure = useAxiosSecure();
+
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -31,22 +40,63 @@ const EditAddressDialouge = ({ address, onClose }) => {
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const axiosSecure = useAxiosSecure()
-
   const onSubmit = async (data) => {
-    console.log(data);
-    setIsLoading(true)
+    setIsLoading(true);
     data.type = address?.type;
-    try{
-      const response = await axiosSecure.post(`/update-address/${address?.id}`, data);
-      console.log(response);
-    }catch(error){
-      console.log(error);
-    }finally{
-      setIsLoading(false)
+    try {
+      const response = await axiosSecure.post(
+        `/update-address/${address?.id}`,
+        data
+      );
+      queryClient.invalidateQueries(["addressbook-data"]);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // fetch all country
+  const { data: allCountry, isLoading: countryDataLoading } = useQuery({
+    queryKey: ["country-data-newAddress"],
+    queryFn: async () => {
+      const response = await api.get(
+        "https://countriesnow.space/api/v0.1/countries/states"
+      );
+      setAllCountries(response.data.data);
+      return response.data.data;
+    },
+    retry: 1,
+  });
+
+  const filteredCountry = allCountry?.filter(
+    (country, index, self) =>
+      index === self.findIndex((t) => t.name === country.name)
+  );
+
+  // fetchStates
+  const fetchStates = async (country, setStates) => {
+    if (!country) return;
+    const response = await api.post(
+      "https://countriesnow.space/api/v0.1/countries/states",
+      {
+        country: country,
+      }
+    );
+    if (response.status === 200) {
+      setStates(response.data.data.states);
+    }
+  };
+
+
+  // call originCountry states
+  const countryName = watch("country");
+  useEffect(() => {
+    if (countryName) {
+      fetchStates(countryName, setStates);
+    }
+  }, [countryName, allCountries]);
 
   return (
     <Dialog open={!!address} onOpenChange={onClose}>
@@ -73,18 +123,14 @@ const EditAddressDialouge = ({ address, onClose }) => {
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem
-                            value="united_states"
-                            className="text-[18px]"
-                          >
-                            United States
-                          </SelectItem>
-                          <SelectItem value="canada" className="text-[18px]">
-                            Canada
-                          </SelectItem>
-                          <SelectItem value="australia" className="text-[18px]">
-                            Australia
-                          </SelectItem>
+                          {filteredCountry?.map((country) => (
+                            <SelectItem
+                              value={country?.name}
+                              className="text-[18px]"
+                            >
+                              {country?.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     )}
@@ -154,9 +200,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
                   />
                 </div>
                 {errors.address && (
-                  <p className="error-message">
-                    {errors.address.message}
-                  </p>
+                  <p className="error-message">{errors.address.message}</p>
                 )}
                 {errors.addresApartment && (
                   <p className="error-message">
@@ -224,21 +268,15 @@ const EditAddressDialouge = ({ address, onClose }) => {
                             <SelectValue placeholder="Select State" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem
-                              value="united_states"
-                              className="text-[18px]"
-                            >
-                              United States
-                            </SelectItem>
-                            <SelectItem value="canada" className="text-[18px]">
-                              Canada
-                            </SelectItem>
-                            <SelectItem
-                              value="australia"
-                              className="text-[18px]"
-                            >
-                              Australia
-                            </SelectItem>
+                            {states?.map((state, index) => (
+                              <SelectItem
+                                key={index}
+                                value={state?.name}
+                                className="text-[18px]"
+                              >
+                                {state?.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       )}

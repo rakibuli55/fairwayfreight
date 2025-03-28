@@ -51,7 +51,7 @@ const ChangePasswordPage = () => {
                 <label htmlFor="current_password">Current Password</label>
                 <input
                   type="password"
-                  placeholder="Enter New Password"
+                  placeholder="Enter Current Password"
                   name="current_password"
                   id="current_password"
                   {...register("current_password", {
@@ -103,7 +103,7 @@ const ChangePasswordPage = () => {
                 <label htmlFor="current-password">Confirm Password</label>
                 <input
                   type="password"
-                  placeholder="Enter New Password"
+                  placeholder="Enter Confirm Password"
                   name="password_confirmation"
                   id="password_confirmation"
                   {...register("password_confirmation", {

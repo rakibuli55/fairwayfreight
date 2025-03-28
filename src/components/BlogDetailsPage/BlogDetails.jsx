@@ -4,7 +4,7 @@ import DOMPurify from "dompurify";
 const BlogDetails = ({data}) => {
   return (
     <>
-      <div className="blog-details sanitize-box pt-10" dangerouslySetInnerHTML={{__html:DOMPurify.sanitize(data?.description)}}>
+      <div className="blog-details sanitize-box pt-10 custom-xs:pt-7" dangerouslySetInnerHTML={{__html:DOMPurify.sanitize(data?.description)}}>
         
       </div>
       <TestimonialCard

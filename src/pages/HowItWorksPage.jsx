@@ -7,7 +7,7 @@ const HowItWorksPage = () => {
   const { homePagedata, homeDataLoading } = useContext(AuthContext);
   return (
     <>
-      <div className="pt-[225px] pb-[10px]">
+      <div className="pt-[225px] pb-[10px] custom-md:pt-[150px] custom-sm:pt-[130px] custom-xs:pt-[120px]">
         <HowItWorks worksData={homePagedata?.working_process} />
       </div>
       <NewsLatterSection newsLatterData={homePagedata?.subscription_section} />

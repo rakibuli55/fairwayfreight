@@ -15,16 +15,16 @@ const FaqSection = () => {
   });
 
   return (
-    <section className="pt-[106px] pb-[124px]">
+    <section className="pt-[106px] pb-[124px] custom-lg:py-0 max-md:pt-0 max-md:pb-20">
       <Container>
-        <div className="mb-10">
+        <div className="mb-10 custom-sm:mb-7 custom-xs:mb-6">
           <TitleV2 subTitle="FAQ" title="Frequently Asked Questions" />
         </div>
         <div>
           <Accordion
             type="single"
             collapsible
-            className="w-full px-[77px] py-10 bg-white shadow-[0px_5px_16px_0px_rgba(0,0,0,0.10)] rounded-[20px] faq-accordion"
+            className="w-full px-[77px] max-md:p-6 py-10 bg-white shadow-[0px_5px_16px_0px_rgba(0,0,0,0.10)] rounded-[20px] faq-accordion custom-xs:!p-5"
           >
             {faqData?.map((item) => (
               <Faq key={item?.id} item={item} />

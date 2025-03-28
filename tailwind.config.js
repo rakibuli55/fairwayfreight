@@ -65,7 +65,7 @@ export default {
 			"custom-sm": { min: "480px", max: "575px" },
 			"custom-md": { min: "576px", max: "768px" },
 			"max-md": { max: "991px" },
-			"custom-2xl": { min: "1366px", max: "1500px" },
+			"custom-2xl": { min: "1366px", max: "1439px" },
 			"max-xl": { max: "1200px" },
 			"custom-xl": { min: "1200px", max: "1365px" },
 			"custom-lg": { min: "992px", max: "1199px" },

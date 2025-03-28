@@ -5,9 +5,9 @@ import { GoClock } from "react-icons/go";
 
 const AuthorArea = ({data}) => {
   return (
-    <div className="flex items-center py-7 border-b border-[#4A4A4A]">
+    <div className="flex items-center py-7 border-b border-[#4A4A4A] custom-xs:flex-wrap author-details-wrapper">
       {/* author details  */}
-      <div className="flex items-center gap-3 w-[33.33%] border-r border-[#555]">
+      <div className="flex items-center gap-3 w-[33.33%] custom-xs:w-[50%] border-r border-[#555] author-details-box">
         <span className="text-[30px]">
           <GoClock />
         </span>
@@ -17,7 +17,7 @@ const AuthorArea = ({data}) => {
         </div>
       </div>
       {/* author details  */}
-      <div className="flex items-center gap-3 w-[33.33%] border-r border-[#555] justify-center">
+      <div className="flex items-center gap-3 w-[33.33%] custom-xs:w-[50%] border-r border-[#555] justify-center author-details-box">
         <span className="text-[30px]">
           <FaRegUser />
         </span>
@@ -31,7 +31,7 @@ const AuthorArea = ({data}) => {
         </div>
       </div>
       {/* author details  */}
-      <div className="flex items-center gap-3 w-[33.33%] justify-center">
+      <div className="flex items-center gap-3 w-[33.33%] custom-xs:w-[100%] custom-xs:mt-4 justify-center author-details-box">
         <span className="text-[30px]">
           <CgNotes />
         </span>

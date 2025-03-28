@@ -30,6 +30,7 @@ import TitleV2 from "../common/TitleV2";
 import InfoIndIcator from "./InfoIndIcator";
 import QuantityButton from "./QuantityButton";
 import ShipTab from "./ShipTab";
+import toast from "react-hot-toast";
 
 const ScheduleShipment = () => {
   const location = useLocation();
@@ -38,6 +39,7 @@ const ScheduleShipment = () => {
   const addressFrom = queryParams.get("address_from");
   const addressTo = queryParams.get("address_to");
   const [date, setDate] = useState(new Date());
+  const [paymentLoading, setPaymentLoading] = useState(false)
 
   // Parse the JSON string back into an object
   const addressFromObj = addressFrom
@@ -65,11 +67,13 @@ const ScheduleShipment = () => {
       originStreetAddress: addressFromObj?.formated_address || "",
       originAddresApartment: addressFromObj?.street1 || "",
       originZip: addressFromObj?.zip || "",
+      originState: addressFromObj?.state || "",
       originCity: addressFromObj?.city || "",
       destinationCountry: addressToObj?.country || "US",
       destinationStreetAddress: addressToObj?.formated_address || "",
       destinationAddresApartment: addressToObj?.street1 || "",
       destinationZip: addressToObj?.zip || "",
+      destinationState: addressToObj?.state || "",
       destinationCity: addressToObj?.city || "",
       pickupDate: date,
     },
@@ -110,6 +114,7 @@ const ScheduleShipment = () => {
   });
 
   const [allCountries, setAllCountries] = useState(null);
+  
   const getCountryByShortName = (countryCode) => {
     const matchedCountry = allCountries?.find(
       (country) => country.iso2 === countryCode
@@ -175,8 +180,8 @@ const ScheduleShipment = () => {
       setAllCountries(response.data.data);
       return response.data.data;
     },
+    retry:1,
   });
-
   const filteredCountry = allCountry?.filter(
     (country, index, self) =>
       index === self.findIndex((t) => t.name === country.name)
@@ -214,7 +219,7 @@ const ScheduleShipment = () => {
 
   // onSubmit
   const onSubmit = (data) => {
-    console.log(data);
+
     const formValues = watch();
     const { parcels } = useGetParcel(formValues, bagSizeData);
     data.rateId = data.selectedRate;
@@ -227,7 +232,6 @@ const ScheduleShipment = () => {
     if (data?.handlingMethod === "myLocation") {
       data.selectedRate = (Number(data.selectedRate) || 0) + 4.99;
     }
-    console.log(typeof data.selectedRate);
 
     const fetchPercelRates = async () => {
       setParcelRateLoading(true);
@@ -272,6 +276,7 @@ const ScheduleShipment = () => {
 
     // call stripe payment
     const stripePay = async () => {
+      setPaymentLoading(true)
       try {
         const response = await axiosSecure.post("/stripe/checkout", {
           total: data?.selectedRate,
@@ -285,7 +290,9 @@ const ScheduleShipment = () => {
           window.open(response.data.data.payment_link, "_blank");
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response.data.message)
+      }finally{
+        setPaymentLoading(false)
       }
     };
     // call stripe payment
@@ -295,7 +302,7 @@ const ScheduleShipment = () => {
       if (!data.rateId) {
         throw new Error("Rate ID is required");
       }
-
+      setPaymentLoading(true)
       try {
         const response = await axiosSecure.post("/paypal/checkout", {
           total,
@@ -310,7 +317,9 @@ const ScheduleShipment = () => {
           window.open(response.data.data.payment_link.href, "_blank");
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response.data.message)
+      }finally{
+        setPaymentLoading(false)
       }
     };
 
@@ -538,7 +547,7 @@ const ScheduleShipment = () => {
                                 {originStates?.map((state, index) => (
                                   <SelectItem
                                     key={index}
-                                    value={state?.name}
+                                    value={state?.state_code}
                                     className="text-[18px]"
                                   >
                                     {state?.name}
@@ -794,7 +803,7 @@ const ScheduleShipment = () => {
                                 {destinationStates?.map((state, index) => (
                                   <SelectItem
                                     key={index}
-                                    value={state?.name}
+                                    value={state?.state_code}
                                     className="text-[18px]"
                                   >
                                     {state?.name}
@@ -1497,9 +1506,9 @@ const ScheduleShipment = () => {
             <button type="submit">
               <PrimaryButton
                 text={
-                  parcelData?.rates.length > 0 ? "Place Order" : "Get a Price"
+                  parcelData?.rates.length > 0 ? `${paymentLoading ? 'Trying to placing order' : 'Place Order'}` : "Get a Price"
                 }
-                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen max-md:py-3 max-md:px-7`}
+                className={`py-4 px-[60px] bg-primaryGreen gap-2 rounded-[40px] text-[18px] font-bold text-white border border-primaryGreen hover:bg-transparent hover:text-primaryGreen max-md:py-3 max-md:px-7 custom-xs:text-base ${paymentLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}
               />
             </button>
           </div>

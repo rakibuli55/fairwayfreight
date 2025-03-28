@@ -1,15 +1,15 @@
 import logo from "../../assets/logo/fairway-logo-circle.png"
 const QuoteCard = ({ rate }) => {
   return (
-    <div className="py-3 px-4 border rounded-[8px] relative">
-      <div className="flex items-start gap-4">
+    <div className="py-3 px-4 border rounded-[8px] min-h-[155px] relative custom-sm:min-h-[150px] custom-xs:min-h-[140px]">
+      <div className="flex items-start gap-4 custom-xs:block">
         <img
-          className="min-w-[60px] max-w-[60px] h-[60px] object-cover rounded-full"
+          className="min-w-[60px] max-w-[60px] h-[60px] custom-xs:min-w-12 custom-xs:max-w-12 custom-xs:h-12 object-cover rounded-full"
           src={logo}
           alt=""
         />
-        <div>
-          <h4 className="text-[20px] font-semibold text-heading mb-1">
+        <div className="custom-sm:text-left custom-xs:text-left custom-xs:mt-4">
+          <h4 className="text-[20px] font-semibold text-heading mb-1 custom-xs:text-[18px]">
             {rate?.servicelevel?.display_name}
           </h4>
           <p className="text-base text-heading font-semibold">

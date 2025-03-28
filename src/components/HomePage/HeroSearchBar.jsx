@@ -38,7 +38,8 @@ const HeroSearchBar = () => {
   const [toValue, setToValue] = useState("");
   const [toSuggestions, setToSuggestions] = useState([]);
   const [selectedToValue, setSelectedToValue] = useState(null);
-  const {bagSizeData} = useContext(AuthContext)
+  const {bagSizeData} = useContext(AuthContext);
+
   // fetchSuggestions
   const fetchSuggestions = async (term, setSuggestions, setLoading) => {
     setLoading(true)
@@ -146,7 +147,6 @@ const HeroSearchBar = () => {
       } catch (error) {
         setError(error.response.data.message)
         setQuoteData(null);
-        console.log('quote error',error);
       } finally {
         setIsLoading(false);
       }
@@ -206,7 +206,7 @@ const HeroSearchBar = () => {
           )}
           {
             isFromLoading && (
-              <img className="absolute top-7 right-0 w-6 h-6" src={puffLoader} alt="" />
+              <img className="absolute top-4 right-0 w-6 h-6" src={puffLoader} alt="" />
             )
           }
         </div>
@@ -254,7 +254,7 @@ const HeroSearchBar = () => {
           )}
           {
             isToLoading && (
-              <img className="absolute top-7 right-0 w-6 h-6" src={puffLoader} alt="" />
+              <img className="absolute top-4 right-0 w-6 h-6" src={puffLoader} alt="" />
             )
           }
         </div>

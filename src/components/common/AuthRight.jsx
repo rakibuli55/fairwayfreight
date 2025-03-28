@@ -5,7 +5,7 @@ import PrimaryButton from "./PrimaryButton";
 const AuthRight = () => {
   return (
     <div className="min-h-screen max-h-screen overflow-hidden relative">
-      <img className="w-full h-full" src={authRightImage} alt="" />
+      <img className="w-full h-screen" src={authRightImage} alt="" />
       <Link to={"/"} className="absolute top-[56px] right-[200px]">
         <PrimaryButton
           text="Back to Home"

@@ -7,41 +7,89 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { api } from "../../api/index";
 import BackButton from "../../components/dashboard/common/BackButton";
 import MainTitle from "../../components/dashboard/common/MainTitle";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import toast from "react-hot-toast";
 
 const AddressBookPage = () => {
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm();
   const [selectedAddress, setSelectedAddress] = useState("home");
   const axiosSecure = useAxiosSecure();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [states, setStates] = useState(null);
+  const [allCountries, setAllCountries] = useState(null);
+
+  const getCountryByShortName = (countryCode) => {
+    const matchedCountry = allCountries?.find(
+      (country) => country.iso2 === countryCode
+    );
+    return matchedCountry?.name;
+  };
 
   const onSubmit = async (data) => {
-    data.type = selectedAddress
+    data.type = selectedAddress;
     data.address = data.streetAddress + data.addresApartment;
     delete data.streetAddress;
     delete data.addresApartment;
-    setIsLoading(true)
-    try{
-      const response = await axiosSecure.post('add-address', data);
-      if(response.status === 200){
-        toast.success(response.data.message)
+    setIsLoading(true);
+    try {
+      const response = await axiosSecure.post("add-address", data);
+      if (response.status === 200) {
+        toast.success(response.data.message);
       }
-    }catch(error){
+    } catch (error) {
       toast.error(error.response.data.message);
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
+  // fetch all country
+  const { data: allCountry, isLoading: countryDataLoading } = useQuery({
+    queryKey: ["country-data-newAddress"],
+    queryFn: async () => {
+      const response = await api.get(
+        "https://countriesnow.space/api/v0.1/countries/states"
+      );
+      setAllCountries(response.data.data);
+      return response.data.data;
+    },
+    retry: 1,
+  });
+
+  // fetchStates
+  const fetchStates = async (country, setStates) => {
+    if (!country) return;
+    const response = await api.post(
+      "https://countriesnow.space/api/v0.1/countries/states",
+      {
+        country: country,
+      }
+    );
+    if (response.status === 200) {
+      setStates(response.data.data.states);
+    }
+  };
+
+  // call originCountry states
+  const countryName = watch("country");
+  useEffect(() => {
+    if (countryName) {
+      const fullCountry = getCountryByShortName(countryName);
+      fetchStates(fullCountry, setStates);
+    }
+  }, [countryName, allCountries]);
+
 
   return (
     <section className="bg-white p-9 rounded-[16px]">
@@ -78,27 +126,22 @@ const AddressBookPage = () => {
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem
-                            value="united_states"
-                            className="text-[18px]"
-                          >
-                            United States
-                          </SelectItem>
-                          <SelectItem value="canada" className="text-[18px]">
-                            Canada
-                          </SelectItem>
-                          <SelectItem value="australia" className="text-[18px]">
-                            Australia
-                          </SelectItem>
+                          {allCountry?.map((country, index) => (
+                            <SelectItem
+                              key={index}
+                              value={country?.iso2}
+                              className="text-[18px]"
+                            >
+                              {country?.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     )}
                   />
                 </div>
                 {errors.country && (
-                  <p className="error-message">
-                    {errors.country.message}
-                  </p>
+                  <p className="error-message">{errors.country.message}</p>
                 )}
               </div>
               {/* sender name  */}
@@ -132,9 +175,11 @@ const AddressBookPage = () => {
                     type="text"
                     name="company_name"
                     id="company_name"
-                    placeholder="company_name Name"
+                    placeholder="Company Name"
                     className="shipment-input"
-                    {...register("company_name", {required:'Please enter your company_name name.'})}
+                    {...register("company_name", {
+                      required: "Please enter your company_name name.",
+                    })}
                   />
                 </div>
                 {errors.company_name && (
@@ -144,10 +189,7 @@ const AddressBookPage = () => {
               {/* address  */}
               <div className="shipment-input-box mt-5">
                 <div>
-                  <label
-                    htmlFor="streetAddress"
-                    className="shipment-label"
-                  >
+                  <label htmlFor="streetAddress" className="shipment-label">
                     Address <span>*</span>
                   </label>
                   <input
@@ -227,30 +269,22 @@ const AddressBookPage = () => {
                             <SelectValue placeholder="Select State" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem
-                              value="united_states"
-                              className="text-[18px]"
-                            >
-                              United States
-                            </SelectItem>
-                            <SelectItem value="canada" className="text-[18px]">
-                              Canada
-                            </SelectItem>
-                            <SelectItem
-                              value="australia"
-                              className="text-[18px]"
-                            >
-                              Australia
-                            </SelectItem>
+                            {states?.map((state, index) => (
+                              <SelectItem
+                                key={index}
+                                value={state?.name}
+                                className="text-[18px]"
+                              >
+                                {state?.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       )}
                     />
                   </div>
                   {errors.state && (
-                    <p className="error-message">
-                      {errors.state.message}
-                    </p>
+                    <p className="error-message">{errors.state.message}</p>
                   )}
                 </div>
               </div>
@@ -277,9 +311,16 @@ const AddressBookPage = () => {
               </div>
             </div>
             <div>
-              <button type="submit" className={`mt-10 ${isLoading ? 'opacity-50 pointer-events-none':'opacity-100 pointer-events-auto'}`}>
+              <button
+                type="submit"
+                className={`mt-10 ${
+                  isLoading
+                    ? "opacity-50 pointer-events-none"
+                    : "opacity-100 pointer-events-auto"
+                }`}
+              >
                 <PrimaryButton
-                  text={isLoading ? 'Saving Address' : 'Save Address'}
+                  text={isLoading ? "Saving Address" : "Save Address"}
                   className="py-[14px] px-10 rounded-[40px] bg-primaryGreen border-[2px] border-primaryGreen text-white text-[18px] font-bold duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen"
                 />
               </button>
