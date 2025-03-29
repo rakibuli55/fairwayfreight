@@ -58,6 +58,11 @@ const Footer = () => {
                   Ship Now
                 </NavLink>
               </li>
+              <li>
+                <NavLink to={"/privacy-policy"} className="footer-link">
+                  Privacy Policy
+                </NavLink>
+              </li>
             </ul>
           </div>
           {/* footer box  */}

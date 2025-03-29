@@ -25,6 +25,7 @@ import PrivateRoute from "../routes/PrivateRoute";
 import PublicRoute from "../routes/PublicRoute";
 import PaymentSuccess from "../pages/Pament/PaymentSuccess";
 import PaymentError from "../pages/Pament/PaymentError";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "help",
         element: <HelpPage />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicyPage />,
       },
       {
         path: "payment-success",
