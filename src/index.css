@@ -322,13 +322,13 @@
   }
   .auth-input-box input,
   .auth-input-box textarea {
-    @apply p-5 custom-xs:py-3 custom-xs:px-4 text-[18px] text-heading border rounded-[12px] w-full focus:outline-none;
+    @apply p-5 custom-xs:py-3 custom-xs:px-4 text-[18px] custom-xs:text-base text-heading border rounded-[12px] w-full focus:outline-none;
   }
   .shipment-form-layout {
     @apply py-[90px] px-[124px] border border-primaryGreen rounded-[24px] custom-xl:p-[60px] custom-lg:p-[30px] max-md:px-5 max-md:py-10 custom-xs:!py-5 custom-xs:rounded-[12px] custom-xs:!px-4;
   }
   .shipment-label {
-    @apply block text-[18px] font-bold capitalize text-heading mb-2;
+    @apply block text-[18px] max-md:text-base font-bold capitalize text-heading mb-2 max-md:text-left;
   }
   .shipment-label span {
     @apply text-red-500;
@@ -361,10 +361,10 @@
     @apply bg-primaryGreen !text-white;
   }
   .user-profile-pair {
-    @apply py-3;
+    @apply py-3 custom-xs:py-[6px] custom-sm:py-[10px];
   }
   .user-profile-pair {
-    @apply flex items-center gap-2 text-[18px] text-heading;
+    @apply flex items-center gap-2 text-[18px] custom-sm:text-base custom-xs:text-base text-heading;
   }
   .user-profile-pair .key {
     @apply w-[150px];
@@ -376,7 +376,7 @@
     @apply border-b border-[#B3BAC5];
   }
   .order-table td {
-    @apply p-6 text-base text-paragraph font-semibold;
+    @apply p-6 custom-xs:py-[10px] custom-xs:px-3 text-base text-paragraph font-semibold;
   }
   .service-cards-wrapper .card-inner:nth-child(odd) .service-card {
     @apply flex-row-reverse;

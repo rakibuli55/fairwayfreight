@@ -17,8 +17,8 @@ const QuickLinks = () => {
     }
   };
   return (
-    <div className="flex items-center gap-2">
-      <p className="text-[18px] text-heading">Quick links: </p>
+    <div className="flex custom-xs:block items-center gap-2 custom-xl:mt-10 custom-lg:mt-10 max-md:mt-6">
+      <p className="text-[18px] text-heading custom-xs:mb-3">Quick links: </p>
       <Select onValueChange={handleChange}>
         <SelectTrigger className="w-[240px] h-[52px] text-base text-heading focus:ring-0">
           <SelectValue placeholder="Select a quick link" />

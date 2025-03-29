@@ -2,7 +2,7 @@
 
 const UserProfileDetails = ({user}) => {
   return (
-    <div className='mt-10'>
+    <div className='mt-10 max-md:mt-5'>
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>First Name</span> <span>:</span></p>
         <p className='font-bold'>{user?.first_name}</p>
@@ -23,18 +23,10 @@ const UserProfileDetails = ({user}) => {
         <p className='key flex items-center justify-between'><span>Email</span> <span>:</span></p>
         <p className='font-bold'>{user?.email}</p>
       </div>
-      {/* <div className='user-profile-pair'>
-        <p className='key flex items-center justify-between'><span>Packages shipped</span> <span>:</span></p>
-        <p className='font-bold'>0</p>
-      </div> */}
       <div className='user-profile-pair'>
         <p className='key flex items-center justify-between'><span>Default address</span> <span>:</span></p>
         <p className='font-bold'>{user?.default_address !== null ? user?.default_address : 'Not set yet'}</p>
       </div>
-      {/* <div className='user-profile-pair'>
-        <p className='key flex items-center justify-between'><span>Default currency</span> <span>:</span></p>
-        <p className='font-bold'>USD - United States Dollar</p>
-      </div> */}
     </div>
   );
 };

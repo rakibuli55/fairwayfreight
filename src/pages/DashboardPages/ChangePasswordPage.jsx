@@ -31,20 +31,20 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <section className="bg-white p-9 rounded-[16px]">
+    <section className="bg-white p-9 custom-sm:p-5 custom-sm:pt-8 custom-xs:p-5 custom-xs:pt-7 rounded-[16px]">
       <div>
         <MainTitle text="Robert Fox’s Profile" />
-        <div className="mt-10 p-10 border border-[#F0F0F0] rounded-[12px]">
+        <div className="mt-10 p-10 max-md:p-6 custom-xs:!p-5 border border-[#F0F0F0] rounded-[12px]">
           <div>
             <BackButton />
           </div>
           <div>
-            <h3 className="text-[32px] text-center font-bold text-heading mb-12">
+            <h3 className="text-[32px] text-center font-bold text-heading mb-12 custom-xs:text-[24px] custom-xs:mt-5 custom-xs:mb-6">
               Edit Your Password
             </h3>
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="w-[560px] mx-auto"
+              className="w-[560px] mx-auto max-md:w-full"
             >
               {/* auth-input-box  */}
               <div className="auth-input-box">
@@ -74,7 +74,7 @@ const ChangePasswordPage = () => {
                 )}
               </div>
               {/* auth-input-box  */}
-              <div className="auth-input-box mt-10">
+              <div className="auth-input-box mt-10 custom-xs:mt-4">
                 <label htmlFor="current-password">New Password</label>
                 <input
                   type="password"
@@ -99,7 +99,7 @@ const ChangePasswordPage = () => {
                 )}
               </div>
               {/* auth-input-box  */}
-              <div className="auth-input-box mt-10">
+              <div className="auth-input-box mt-10 custom-xs:mt-4">
                 <label htmlFor="current-password">Confirm Password</label>
                 <input
                   type="password"
@@ -119,10 +119,10 @@ const ChangePasswordPage = () => {
                   </p>
                 )}
               </div>
-              <button type="submit" className={`w-full text-center mt-10 ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
+              <button type="submit" className={`w-full text-center mt-10 custom-xs:mt-6 ${isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
                 <PrimaryButton
                   text={isLoading ? 'Trying to save' : 'Save'}
-                  className="py-4 px-8 w-full bg-primaryGreen rounded-[50px] text-[18px] justify-center text-white hover:bg-transparent border-[2px] border-primaryGreen hover:text-primaryGreen"
+                  className="py-4 px-8 w-full bg-primaryGreen rounded-[50px] text-[18px] justify-center text-white hover:bg-transparent border-[2px] border-primaryGreen hover:text-primaryGreen custom-xs:py-2"
                 />
               </button>
             </form>

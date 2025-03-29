@@ -138,7 +138,6 @@ const HeroSearchBar = () => {
             width: bagTypeObj[0].width,
           },
         });
-        console.log(response);
         if (response.status === 200) {
           setQuoteData(response.data);
           setError(null);

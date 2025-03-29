@@ -21,7 +21,7 @@ const UserProfileUploader = ({ setValue, name, user }) => {
   : defaultAvatar;
 
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-6 custom-xs:gap-3">
       <input
         type="file"
         id="userAvatarUploader"
@@ -30,7 +30,7 @@ const UserProfileUploader = ({ setValue, name, user }) => {
       />
       <label
         htmlFor="userAvatarUploader"
-        className="inline-block w-[130px] h-[130px] rounded-full overflow-hidden relative cursor-pointer"
+        className="inline-block w-[130px] h-[130px] custom-xs:w-[90px] custom-xs:h-[90px] rounded-full overflow-hidden relative cursor-pointer"
       >
         <img
           className="w-full h-full object-cover"
@@ -42,7 +42,7 @@ const UserProfileUploader = ({ setValue, name, user }) => {
         </p>
       </label>
       <div>
-        <h3 className="text-[24px] font-bold text-heading">
+        <h3 className="text-[24px] font-bold text-heading custom-xs:text-[22px]">
           {user?.first_name} {user?.last_name}
         </h3>
       </div>

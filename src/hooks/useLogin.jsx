@@ -7,18 +7,19 @@ import { AuthContext } from "../context/index";
 const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const {setAuthToken, setUser} = useContext(AuthContext);
+  const {setAuthToken, setUser, setReferralCode} = useContext(AuthContext);
 
   const userLogin = async (credentials) => {
     setIsLoading(true);
     try {
       const response = await api.post("/users/login", credentials);
-      console.log(response);
       if (response.status === 200) {
         const userData = response?.data?.data;
         localStorage.setItem('authToken', userData?.token)
+        localStorage.setItem('referral_code', userData?.referral_code)
         setAuthToken(userData?.token);
         setUser(userData);
+        setReferralCode(userData?.referral_code);
         toast.success(response?.data?.message);
         navigate("/");
       }

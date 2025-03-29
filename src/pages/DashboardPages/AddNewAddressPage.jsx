@@ -92,10 +92,10 @@ const AddressBookPage = () => {
 
 
   return (
-    <section className="bg-white p-9 rounded-[16px]">
+    <section className="bg-white p-9 max-md:p-6 custom-xs:!p-4 custom-xs:!pt-7 max-md:pt-8 rounded-[16px]">
       <div>
         <MainTitle text="Add New Address " />
-        <div className="mt-10 p-10 border border-[#F0F0F0] rounded-[12px]">
+        <div className="mt-10 p-10 max-md:p-6 custom-xs:!p-4 border border-[#F0F0F0] rounded-[12px]">
           <div>
             <BackButton />
           </div>
@@ -106,7 +106,7 @@ const AddressBookPage = () => {
                 onSelect={setSelectedAddress}
               />
             </div>
-            <div className="w-[50%]">
+            <div className="w-[50%] custom-xl:w-[80%] custom-lg:w-[80%] max-md:w-full">
               {/* country  */}
               <div className="shipment-input-box mt-5">
                 <div>
@@ -122,7 +122,7 @@ const AddressBookPage = () => {
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                        <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
@@ -210,7 +210,7 @@ const AddressBookPage = () => {
                 )}
               </div>
               {/* zip city state  */}
-              <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6">
+              <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6 custom-xs:grid-cols-1">
                 <div className="overflow-hidden">
                   <div>
                     <label htmlFor="zip" className="shipment-label">
@@ -265,7 +265,7 @@ const AddressBookPage = () => {
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                          <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
                             <SelectValue placeholder="Select State" />
                           </SelectTrigger>
                           <SelectContent>
@@ -313,7 +313,7 @@ const AddressBookPage = () => {
             <div>
               <button
                 type="submit"
-                className={`mt-10 ${
+                className={`mt-10 custom-xs:mt-6 ${
                   isLoading
                     ? "opacity-50 pointer-events-none"
                     : "opacity-100 pointer-events-auto"
@@ -321,7 +321,7 @@ const AddressBookPage = () => {
               >
                 <PrimaryButton
                   text={isLoading ? "Saving Address" : "Save Address"}
-                  className="py-[14px] px-10 rounded-[40px] bg-primaryGreen border-[2px] border-primaryGreen text-white text-[18px] font-bold duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen"
+                  className="py-[14px] px-10 rounded-[40px] bg-primaryGreen border-[2px] border-primaryGreen text-white text-[18px] font-bold duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen max-md:py-2 max-md:px-5 custom-xs:text-base"
                 />
               </button>
             </div>

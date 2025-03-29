@@ -16,6 +16,8 @@ const AuthProvider = ({ children }) => {
   const {homePagedata, homeDataLoading} = useGetHomepageData();
   const {bagSizeData, bagSizeDataLoading} = useGetBagSize();
   const [favicon, setFavicon] = useState(null);
+  const [referralCode, setReferralCode] = useState(localStorage.getItem("referral_code") || null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -46,7 +48,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ authToken, setAuthToken, user, setUser, siteSettingsData, homePagedata, homeDataLoading, bagSizeData }}
+      value={{ authToken, setAuthToken, user, setUser, siteSettingsData, homePagedata, homeDataLoading, bagSizeData, referralCode, setReferralCode, isSidebarOpen, setIsSidebarOpen }}
     >
       {children}
     </AuthContext.Provider>

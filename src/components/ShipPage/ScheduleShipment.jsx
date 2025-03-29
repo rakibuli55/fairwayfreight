@@ -282,9 +282,9 @@ const ScheduleShipment = () => {
           total: data?.selectedRate,
           rate_id: data?.rateId,
           success_url:
-            "http://localhost:5173/payment-success",
+            "https://fairwayfreight.vercel.app/payment-success",
           cancel_url:
-            "http://localhost:5173/payment-error",
+            "https://fairwayfreight.vercel.app/payment-error",
         });
         if (response.status === 201) {
           window.open(response.data.data.payment_link, "_blank");
@@ -308,9 +308,9 @@ const ScheduleShipment = () => {
           total,
           rate_id: data.rateId,
           success_url:
-            "http://localhost:5173/payment-success",
+            "https://fairwayfreight.vercel.app/payment-success",
           cancel_url:
-            "http://localhost:5173/payment-error",
+            "https://fairwayfreight.vercel.app/payment-error",
         });
         console.log(response);
         if (response.status === 201) {

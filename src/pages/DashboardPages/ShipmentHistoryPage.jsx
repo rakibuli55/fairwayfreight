@@ -17,13 +17,12 @@ const ShipmentHistory = () => {
     }
   });
 
-  console.log('shipmentsData',shipmentsData);
 
   return (
-    <section className="bg-white p-9 rounded-[16px]">
+    <section className="bg-white p-9 rounded-[16px] max-md:p-6 max-md:pt-8 custom-xs:!p-4 custom-xs:!pt-6">
       <div>
         <MainTitle text="Shipment History" />
-        <div className="mt-10 p-10 border border-[#F0F0F0] rounded-[12px]">
+        <div className="mt-10 custom-xs:mt-8 p-10 max-md:p-5 border border-[#F0F0F0] rounded-[12px]">
           <div>
             <BackButton />
           </div>

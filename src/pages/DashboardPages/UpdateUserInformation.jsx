@@ -66,10 +66,10 @@ const UpdateUserInformation = () => {
   };
 
   return (
-    <section className="bg-white p-9 rounded-[16px]">
+    <section className="bg-white p-9 custom-xs:p-5 custom-xs:pt-7 rounded-[16px]">
       <div>
         <MainTitle text="Robert Fox’s Profile" />
-        <div className="mt-10 p-10 border border-[#F0F0F0] rounded-[12px]">
+        <div className="mt-10 p-10 custom-xs:p-4 border border-[#F0F0F0] rounded-[12px]">
           <div>
             <BackButton />
           </div>
@@ -83,7 +83,7 @@ const UpdateUserInformation = () => {
             </div>
             <div>
               {/* input row  */}
-              <div className="grid grid-cols-2 gap-6 mt-10">
+              <div className="grid grid-cols-2 gap-6 custom-xs:gap-4 mt-10 custom-sm:grid-cols-1 custom-xs:grid-cols-1">
                 <div className="auth-input-box">
                   <label htmlFor="fname">First Name</label>
                   <input
@@ -116,7 +116,7 @@ const UpdateUserInformation = () => {
                 </div>
               </div>
               {/* input row  */}
-              <div className="grid grid-cols-2 gap-6 mt-6">
+              <div className="grid grid-cols-2 gap-6 mt-6 custom-xs:gap-4 custom-sm:grid-cols-1 custom-xs:grid-cols-1">
                 <div className="auth-input-box">
                   <label htmlFor="phone">Phone</label>
                   <input
@@ -149,7 +149,7 @@ const UpdateUserInformation = () => {
                 </div>
               </div>
               {/* input row  */}
-              <div className="grid grid-cols-3 gap-6 mt-6">
+              <div className="grid grid-cols-3 gap-6 mt-6 custom-xs:gap-4 custom-sm:grid-cols-1 custom-xs:grid-cols-1">
                 <div className="auth-input-box">
                   <label htmlFor="country">Country/Region</label>
                   <input
@@ -200,7 +200,7 @@ const UpdateUserInformation = () => {
                   )}
                 </div>
               </div>
-              <div className="auth-input-box mt-6">
+              <div className="auth-input-box mt-6 custom-xs:mt-4">
                 <label htmlFor="default_address">Address</label>
                 <textarea
                   placeholder="Enter your address"
@@ -219,7 +219,7 @@ const UpdateUserInformation = () => {
               </div>
             </div>
             <div
-              className={`mt-8 ${
+              className={`mt-8 custom-xs:mt-4 ${
                 isLoading
                   ? "opacity-50 pointer-events-none"
                   : "opacity-100 pointer-events-auto"
@@ -228,7 +228,7 @@ const UpdateUserInformation = () => {
               <button type="submit">
                 <PrimaryButton
                   text={isLoading ? "Saving Chnages" : "Save Changes"}
-                  className="text-base font-bold text-white py-4 px-8 bg-primaryGreen rounded-[50px] border-[2px] border-primaryGreen hover:text-primaryGreen hover:bg-transparent"
+                  className="text-base font-bold text-white py-4 px-8 bg-primaryGreen rounded-[50px] border-[2px] border-primaryGreen hover:text-primaryGreen hover:bg-transparent custom-xs:py-[10px] custom-xs:px-5"
                 />
               </button>
             </div>

@@ -9,14 +9,14 @@ const UserProfile = ({user}) => {
   return (
     <div className="">
         {/* profile  */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 max-md:gap-3">
         <img
-          className="h-[130px] w-[130px] rounded-full object-cover"
+          className="h-[130px] w-[130px] max-md:h-[90px] max-md:w-[90px] custom-xs:!w-[80px] custom-xs:!h-[80px] rounded-full object-cover"
           src={userAvatar}
           alt="profileImage"
         />
         <div>
-          <h2 className="text-[28px] font-bold text-heading">{user?.first_name} {user?.last_name}</h2>
+          <h2 className="text-[28px] font-bold text-heading max-md:text-[24px] custom-xs:!text-[20px]">{user?.first_name} {user?.last_name}</h2>
         </div>
       </div>
       <div>

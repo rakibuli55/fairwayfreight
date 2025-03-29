@@ -100,7 +100,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
 
   return (
     <Dialog open={!!address} onOpenChange={onClose}>
-      <DialogContent className="max-w-[800px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[800px] max-h-[90vh] max-md:max-w-[95%] overflow-y-auto max-md:rounded-[10px] custom-xs:p-4">
         <DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div>
@@ -119,7 +119,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                        <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
@@ -209,7 +209,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
                 )}
               </div>
               {/* zip city state  */}
-              <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6">
+              <div className="shipment-input-box mt-5 grid grid-cols-3 gap-6 max-md:grid-cols-1">
                 <div className="overflow-hidden">
                   <div>
                     <label htmlFor="zip" className="shipment-label">
@@ -264,7 +264,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="w-full h-[77px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
+                          <SelectTrigger className="w-full h-[77px] max-md:h-[50px] text-[18px] rounded-[12px] border border-[#B3BAC5] px-5 focus:ring-0">
                             <SelectValue placeholder="Select State" />
                           </SelectTrigger>
                           <SelectContent>
@@ -312,7 +312,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
             <div>
               <button
                 type="submit"
-                className={`mt-10 ${
+                className={`mt-10 custom-xs:mt-6 ${
                   isLoading
                     ? "opacity-50 pointer-events-none"
                     : "opacity-100 pointer-events-auto"
@@ -320,7 +320,7 @@ const EditAddressDialouge = ({ address, onClose }) => {
               >
                 <PrimaryButton
                   text={isLoading ? "Saving Address" : "Save Address"}
-                  className="py-[14px] px-10 rounded-[40px] bg-primaryGreen border-[2px] border-primaryGreen text-white text-[18px] font-bold duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen"
+                  className="py-[14px] px-10 rounded-[40px] bg-primaryGreen border-[2px] border-primaryGreen text-white text-[18px] font-bold duration-200 ease-in-out hover:bg-transparent hover:text-primaryGreen custom-xs:py-2 custom-xs:px-5"
                 />
               </button>
             </div>
